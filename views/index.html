@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Socket.IO chat</title>
+    </head>
+    <body>
+        <form action="http://localhost:8080/register" method="post">
+            Name:<br>
+            <input id="name" type="text" name="name" placeholder="Enter your name">
+            <br>
+            Handle:<br>
+            <input id="handle" type="text" name="handle" placeholder="Enter the handle you want to use">
+            <br>
+            Phone:<br>
+            <input id="phone" type="text" name="phone" placeholder="Enter your phone number">
+            <br>
+            Email:<br>
+            <input id="email" type="email" name="email" placeholder="Enter your email">
+            <br><br>
+            <input type="submit" value="Submit">
+        </form>
+        
+        <form action="http://localhost:8080/login">
+            Handle:<br>
+            <input id="handle" type="text" name="handle" placeholder="Enter the handle you want to use">
+            <br><br><br>
+            <input type="submit" value="login">
+        </form>
+    </body>
+</html>
