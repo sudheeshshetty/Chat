@@ -41,8 +41,12 @@ module.exports = function (app,io){
         })
         
     });
+    
+    
     var handle=null;
     var private=null;
+    var users={};
+    var keys={};
     app.get('/login',function(req,res){
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader("Access-Control-Allow-Method","'GET, POST, OPTIONS, PUT, PATCH, DELETE'");
@@ -64,7 +68,7 @@ module.exports = function (app,io){
     io.on('connection',function(socket){
         console.log("User is connected  "+handle);
         console.log(socket.id);
-        io.to(socket.id).emit('message', socket.id);
+        io.to(socket.id).emit('message', handle);
 
         //                    models.user.update({"handle":handle},{'$set':{'connection_id':socket.id,}},function(err,doc){
         //                        if (err){ return res.send(500, { error: err });}
@@ -72,49 +76,62 @@ module.exports = function (app,io){
         //                            console.log("succesfully saved"+socket.id);
         //                        }
         //                    })
-        models.online.create({"handle":handle,"connection_id":socket.id},function(err,doc){
-            if(err) res.json(err);
-            else{
-                console.log("inside create");
-                models.online.find({},function(err,doc){
-                    if(err){res.json(err);}
-                    else {io.emit('chat message',doc);
-                         io.emit('self',{"handle":handle,"connection_id":socket.id});
-                         } 
-                });
-            }
-        });
+//        models.online.create({"handle":handle,"connection_id":socket.id},function(err,doc){
+//            if(err) res.json(err);
+//            else{
+//                console.log("inside create");
+//                models.online.find({},function(err,doc){
+//                    if(err){res.json(err);}
+//                    else {io.emit('chat message',doc);
+//                         io.emit('self',{"handle":handle,"connection_id":socket.id});
+//                         } 
+//                });
+//            }
+//        });
+        
+        users[handle]=socket.id;
+        keys[socket.id]=handle;
+        console.log(users);
+        io.emit('users',users);
+        
 
-        private=function(data){
-            console.log("In here  "+data.my_handle+" "+data.friend_handle+socket.id);
-            ev=data.my_handle+" "+data.friend_handle;
-            socket.on(ev,function(msg){
-                console.log("still in");
-                console.log('private  :'+msg);
-                io.emit(data.my_handle+" "+data.friend_handle,msg);
-            });
-        };
-
-        socket.on('chat message',function(msg){
-            console.log('message  :'+msg);
-            io.emit('chat message',msg);
-        })
+//        private=function(data){
+//            console.log("In here  "+data.my_handle+" "+data.friend_handle+socket.id);
+//            ev=data.my_handle+" "+data.friend_handle;
+//            socket.on(ev,function(msg){
+//                console.log("still in");
+//                console.log('private  :'+msg);
+//                io.emit(data.my_handle+" "+data.friend_handle,msg);
+//            });
+//        };
+//
+//        socket.on('chat message',function(msg){
+//            console.log('message  :'+msg);
+//            io.emit('chat message',msg);
+//        })
+//        socket.on('depart', function(doc) {
+//            delete users[doc];
+//            io.emit('users',users);
+//        });
         socket.on('disconnect', function(){
-            console.log(socket.id);
-            models.online.remove({"connection_id":socket.id},function(err,doc){
-                if(err) res.json(err);
-                else{
-                    console.log("inside remove");
-                    models.online.find({},function(err,doc){
-                        if(err){res.json(err);}
-                        else {io.emit('chat message',doc);} 
-                    });
-                }
-            });
+            delete users[keys[socket.id]];
+            delete keys[socket.id];
+            io.emit('users',users);
+            console.log(users);
+//            models.online.remove({"connection_id":socket.id},function(err,doc){
+//                if(err) res.json(err);
+//                else{
+//                    console.log("inside remove");
+//                    models.online.find({},function(err,doc){
+//                        if(err){res.json(err);}
+//                        else {io.emit('chat message',doc);} 
+//                    });
+//                }
+//            });
         });
     });
     
-    app.post('/confirm',function(req,res){
+    app.post('/friend_request',function(req,res){
         console.log("confirm");
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader("Access-Control-Allow-Method","'GET, POST, OPTIONS, PUT, PATCH, DELETE'");
@@ -134,11 +151,11 @@ module.exports = function (app,io){
                 console.log(doc);
             }
         });
-        io.to(req.body.friend_id).emit('private message', req.body);
+        io.to(users[req.body.friend_handle]).emit('message', req.body);
         res.send("Sent");
     });
     
-    app.post('/confirmed',function(req,res){
+    app.post('/friend_request/confirmed',function(req,res){
         console.log(req.body);
         if(req.body.confirm=="Yes"){
         models.user.update({"handle":req.body.my_handle},{'$set':{'friends':{"name":req.body.friend_handle,"status":"Friend"}}},{upsert:true},function(err,doc){
@@ -147,8 +164,8 @@ module.exports = function (app,io){
 
                 console.log("Inside yes confirmed");
                 private(req.body);
-                io.to(req.body.friend_id).emit('friend', req.body);
-                io.to(req.body.my_id).emit('friend', req.body);
+                io.to(users[req.body.friend_handle]).emit('friend', req.body);
+                io.to(users[req.body.my_handle]).emit('friend', req.body);
             }
         });}
         else{
@@ -157,7 +174,7 @@ module.exports = function (app,io){
         models.user.update({"handle":req.body.my_handle},{'$set':{'friends':{"name":req.body.friend_handle,"status":"Rejected"}}},{upsert:true},function(err,doc){
             if(err){res.json(err);}
             else{
-                res.json("No");
+                console.log("No");
             }
         });}
     });

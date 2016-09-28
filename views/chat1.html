@@ -179,7 +179,7 @@
                     <li>
                         <button  data-toggle="modal" data-target="#myModal" ng-click="friend_request(user)"> 
                             <img src="/views/dist/img/user1-128x128.jpg" alt="User Image">
-                           <a class="users-list-name">{{user.handle}}</a></button>
+                           <a class="users-list-name">{{user}}</a></button>
                     </li>  
                   </ul>
                   <!-- /.users-list -->
@@ -203,7 +203,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Are you sure you want to connect?</h4>
+                    <h4 class="modal-title">Are you sure you want to connect to {{friend.handle}}?</h4>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="confirm()">ok</button>
