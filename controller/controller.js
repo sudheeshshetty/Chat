@@ -68,7 +68,7 @@ module.exports = function (app,io){
     io.on('connection',function(socket){
         console.log("User is connected  "+handle);
         console.log(socket.id);
-        io.to(socket.id).emit('message', handle);
+        io.to(socket.id).emit('handle', handle);
 
         //                    models.user.update({"handle":handle},{'$set':{'connection_id':socket.id,}},function(err,doc){
         //                        if (err){ return res.send(500, { error: err });}
@@ -135,7 +135,7 @@ module.exports = function (app,io){
         console.log("confirm");
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader("Access-Control-Allow-Method","'GET, POST, OPTIONS, PUT, PATCH, DELETE'");
-        console.log(req.body);
+        console.log("body"+req.body.my_handle);
         models.user.update({
             handle:req.body.my_handle
         },{
@@ -151,6 +151,7 @@ module.exports = function (app,io){
                 console.log(doc);
             }
         });
+        console.log(users[req.body.friend_handle]);
         io.to(users[req.body.friend_handle]).emit('message', req.body);
         res.send("Sent");
     });
@@ -163,7 +164,7 @@ module.exports = function (app,io){
             else{
 
                 console.log("Inside yes confirmed");
-                private(req.body);
+//                private(req.body);
                 io.to(users[req.body.friend_handle]).emit('friend', req.body);
                 io.to(users[req.body.my_handle]).emit('friend', req.body);
             }

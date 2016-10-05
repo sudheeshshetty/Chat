@@ -56,14 +56,13 @@ app.controller('myController',['$scope','socket','$http','$mdDialog',function($s
 //    console.log($scope.status);
     
 
-//    socket.on('private message', function(data) {
-//        $scope.showConfirm(data);
-//    });
-//    
-//    socket.on('friend', function(data) {
-//        console.log("Connection Established");
-//        $scope.chat(data.my_handle, data.friend_handle);
-//    });
+    socket.on('message', function(data) {
+        $scope.showConfirm(data);
+    });
+    
+    socket.on('friend', function(data) {
+        console.log("Connection Established"+data);
+    });
     
     $scope.friend_request = function(user) {   
         $scope.friend = user;
@@ -88,18 +87,19 @@ app.controller('myController',['$scope','socket','$http','$mdDialog',function($s
     
     $scope.confirm=function(){
 
-        console.log("Sss"+$scope.friend.connection_id);
+        console.log("Sss"+$scope.friend);
         var data = {
-            "friend_handle":$scope.friend.handle,
-            "my_handle":$scope.user.handle
+            "friend_handle":$scope.friend,
+            "my_handle":$scope.user
         };
+        console.log(data);
 
         var config = {
             headers : {
                 'Content-Type': 'application/json'
             }
         }
-        $http({method: 'POST',url:'http://localhost:8080/   friend_request', data:data, headers:config})
+        $http({method: 'POST',url:'http://localhost:8080/friend_request', data:data, headers:config})
             .success(function (data) {
             console.log(data)
         })
