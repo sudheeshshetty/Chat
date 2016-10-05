@@ -61,20 +61,19 @@
 
           <!-- /.box -->
           <div class="row">
-              <div class="col-md-6" ng-repeat="chat in live_chat" >
+              <div class="col-md-6" >
               <!-- DIRECT CHAT -->
-                  {{live_chat.length}}
-                  <div class="box box-warning direct-chat direct-chat-warning" >
-                  <div class="box-header with-border" >
-                  <h3 class="box-title" id="event_name">{{chat}}</h3>
+                  <div class="box box-warning direct-chat direct-chat-warning" ng-repeat="friend in friends">
+                      <div class="box-header with-border">
+                  <h3 class="box-title" id="event_name">{{friend}}</h3>
 
                   <div class="box-tools pull-right">
-                    <span data-toggle="tooltip" title="3 New Messages" class="badge bg-yellow">3</span>
+<!--                    <span data-toggle="tooltip" title="3 New Messages" class="badge bg-yellow">3</span>-->
                     <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                    </button>
 <!--
-                    <button type="button" class="btn btn-box-tool" data-toggle="tooltip" title="Contacts" data-widget="chat-pane-toggle">
-                      <i class="fa fa-comments"></i></button>
+                    </button>
+                        <button type="button" class="btn btn-box-tool" data-toggle="tooltip" title="Contacts" data-widget="chat-pane-toggle">
+                          <i class="fa fa-comments"></i></button>
 -->
                     <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i>
                     </button>
@@ -148,7 +147,7 @@
                     <div class="input-group">
                       <input type="text" name="message" placeholder="Type Message ..." class="form-control" ng-model="message">
                           <span class="input-group-btn">
-                            <button type="button" class="btn btn-warning btn-flat" ng-click="send_message(chat,message)">Send</button>
+                            <button type="button" class="btn btn-warning btn-flat" ng-click="send_message(friend,message)">Send</button>
                           </span>
                     </div>
                   </div>

@@ -105,10 +105,10 @@ module.exports = function (app,io){
 //            });
 //        };
 //
-//        socket.on('chat message',function(msg){
-//            console.log('message  :'+msg);
-//            io.emit('chat message',msg);
-//        })
+        socket.on('private message',function(msg){
+            console.log('message  :'+msg.split("#*@")[0]);
+            io.to(users[msg.split("#*@")[0]]).emit('private message', msg.split("#*@")[1]);
+        });
 //        socket.on('depart', function(doc) {
 //            delete users[doc];
 //            io.emit('users',users);
@@ -165,8 +165,8 @@ module.exports = function (app,io){
 
                 console.log("Inside yes confirmed");
 //                private(req.body);
-                io.to(users[req.body.friend_handle]).emit('friend', req.body);
-                io.to(users[req.body.my_handle]).emit('friend', req.body);
+                io.to(users[req.body.friend_handle]).emit('friend', req.body.my_handle);
+                io.to(users[req.body.my_handle]).emit('friend', req.body.friend_handle);
             }
         });}
         else{

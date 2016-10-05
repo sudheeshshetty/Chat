@@ -18,6 +18,7 @@ app.controller('myController',['$scope','socket','$http','$mdDialog',function($s
     socket.on('handle', function(data) {
         $scope.user = data;
     });
+    $scope.friends=[];
     socket.on('users', function(data) {
         $scope.$apply(function () {
             $scope.users=[];
@@ -62,6 +63,9 @@ app.controller('myController',['$scope','socket','$http','$mdDialog',function($s
     
     socket.on('friend', function(data) {
         console.log("Connection Established"+data);
+        $scope.$apply(function () {
+            $scope.friends.push(data);
+        });
     });
     
     $scope.friend_request = function(user) {   
@@ -79,10 +83,14 @@ app.controller('myController',['$scope','socket','$http','$mdDialog',function($s
 //        }); 
 //    };
     
-//    $scope.send_message=function(chat,message){
-//        console.log(chat+message);
-//        socket.emit(chat,message);
-//    }
+    socket.on('private message', function(data) {
+        console.log(data);
+    });
+    
+    $scope.send_message=function(chat,message){
+        console.log(chat+" "+message);
+        socket.emit('private message',chat+"#*@"+message);
+    }
 //    socket.emit('depart',$scope.user);
     
     $scope.confirm=function(){
