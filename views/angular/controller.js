@@ -84,12 +84,43 @@ app.controller('myController',['$scope','socket','$http','$mdDialog',function($s
 //    };
     
     socket.on('private message', function(data) {
-        console.log(data);
+        console.log(data.split("#*@")[0]+" "+data.split("#*@")[1]);
+        var d = document.createElement('div');
+        str='<div class="direct-chat-msg right">\
+                        <div class="direct-chat-info clearfix">\
+                        <span class="direct-chat-name pull-right">'+data.split("#*@")[2]+'</span>\
+                        <span class="direct-chat-timestamp pull-left">23 Jan 2:05 pm</span>\
+                        </div>\
+                        <img class="direct-chat-img" src="/views/dist/img/user3-128x128.jpg" alt="message user image">\
+                        <div class="direct-chat-text">'
+                        +data.split("#*@")[1]+
+                        '</div>\
+                        </div>';
+        console.log(str);
+        d.innerHTML=str;
+        document.getElementById(data.split("#*@")[2]).appendChild(d);
+        document.getElementById(data.split("#*@")[2]).scrollTop=document.getElementById(data.split("#*@")[2]).scrollHeight;
+        $scope.data.split("#*@")[0]=[];
+        $scope.data.split("#*@")[0].push(data.split("#*@")[1]);
+        
     });
     
     $scope.send_message=function(chat,message){
         console.log(chat+" "+message);
-        socket.emit('private message',chat+"#*@"+message);
+        div = document.createElement('div');
+        div.innerHTML='<div class="direct-chat-msg"> \
+                                                  <div class="direct-chat-info clearfix">\
+                                                  <span class="direct-chat-name pull-left">'+$scope.user+'</span>\
+                                                  <span class="direct-chat-timestamp pull-right">23 Jan 2:00 pm</span>\
+                                                  </div>\
+                                                  <img class="direct-chat-img" src="/views/dist/img/user1-128x128.jpg"\ alt="message user image">\
+                                                  <div class="direct-chat-text">'
+                                                  +message+
+                                                  '</div>\
+                                                  </div>';
+        document.getElementById(chat).appendChild(div);
+        document.getElementById(chat).scrollTop=document.getElementById(chat).scrollHeight;
+        socket.emit('private message',chat+"#*@"+message+"#*@"+$scope.user);
     }
 //    socket.emit('depart',$scope.user);
     
@@ -116,3 +147,8 @@ app.controller('myController',['$scope','socket','$http','$mdDialog',function($s
         });
     };
 }]);
+app.directive('myMsg',function(){
+    return {
+        template: 'Name: {{customer.name}} Address: {{customer.address}}'
+    };
+});

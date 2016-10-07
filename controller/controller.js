@@ -107,7 +107,7 @@ module.exports = function (app,io){
 //
         socket.on('private message',function(msg){
             console.log('message  :'+msg.split("#*@")[0]);
-            io.to(users[msg.split("#*@")[0]]).emit('private message', msg.split("#*@")[1]);
+            io.to(users[msg.split("#*@")[0]]).emit('private message', msg);
         });
 //        socket.on('depart', function(doc) {
 //            delete users[doc];
