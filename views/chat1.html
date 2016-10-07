@@ -125,9 +125,9 @@
                 <div class="box-footer">
                   <div>
                     <div class="input-group">
-                      <input type="text" name="message" placeholder="Type Message ..." class="form-control" ng-model="message">
+                        <input type="text" name="message" placeholder="Type Message ..." class="form-control" ng-model="message" my-enter="send_message('{{friend}}','{{message}}')">
                           <span class="input-group-btn">
-                            <button type="button" class="btn btn-warning btn-flat" ng-click="send_message(friend,message)">Send</button>
+                              <button type="button" class="btn btn-warning btn-flat" ng-click="send_message(friend,message)">Send</button>
                           </span>
                     </div>
                   </div>

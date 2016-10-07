@@ -18,6 +18,7 @@ app.controller('myController',['$scope','socket','$http','$mdDialog',function($s
     socket.on('handle', function(data) {
         $scope.user = data;
     });
+    var monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October","November", "December"];
     $scope.friends=[];
     socket.on('users', function(data) {
         $scope.$apply(function () {
@@ -83,13 +84,27 @@ app.controller('myController',['$scope','socket','$http','$mdDialog',function($s
 //        }); 
 //    };
     
+    getDate=function(){
+        date = new Date();
+        hour=date.getHours();
+        period="AM";
+        if (hour>12){
+            hour=hour/12;
+            period="PM";
+        }
+        form_date=monthNames[date.getMonth()]+" "+date.getDate()+", "+hour+":"+date.getMinutes()+" "+period;
+        return form_date;        
+    }
+    
     socket.on('private message', function(data) {
         console.log(data.split("#*@")[0]+" "+data.split("#*@")[1]);
+        
+        
         var d = document.createElement('div');
         str='<div class="direct-chat-msg right">\
                         <div class="direct-chat-info clearfix">\
                         <span class="direct-chat-name pull-right">'+data.split("#*@")[2]+'</span>\
-                        <span class="direct-chat-timestamp pull-left">23 Jan 2:05 pm</span>\
+<span class="direct-chat-timestamp pull-left">'+getDate()+'</span>\
                         </div>\
                         <img class="direct-chat-img" src="/views/dist/img/user3-128x128.jpg" alt="message user image">\
                         <div class="direct-chat-text">'
@@ -99,10 +114,7 @@ app.controller('myController',['$scope','socket','$http','$mdDialog',function($s
         console.log(str);
         d.innerHTML=str;
         document.getElementById(data.split("#*@")[2]).appendChild(d);
-        document.getElementById(data.split("#*@")[2]).scrollTop=document.getElementById(data.split("#*@")[2]).scrollHeight;
-        $scope.data.split("#*@")[0]=[];
-        $scope.data.split("#*@")[0].push(data.split("#*@")[1]);
-        
+        document.getElementById(data.split("#*@")[2]).scrollTop=document.getElementById(data.split("#*@")[2]).scrollHeight;        
     });
     
     $scope.send_message=function(chat,message){
@@ -111,7 +123,7 @@ app.controller('myController',['$scope','socket','$http','$mdDialog',function($s
         div.innerHTML='<div class="direct-chat-msg"> \
                                                   <div class="direct-chat-info clearfix">\
                                                   <span class="direct-chat-name pull-left">'+$scope.user+'</span>\
-                                                  <span class="direct-chat-timestamp pull-right">23 Jan 2:00 pm</span>\
+<span class="direct-chat-timestamp pull-right">'+getDate()+'</span>\
                                                   </div>\
                                                   <img class="direct-chat-img" src="/views/dist/img/user1-128x128.jpg"\ alt="message user image">\
                                                   <div class="direct-chat-text">'
@@ -121,6 +133,7 @@ app.controller('myController',['$scope','socket','$http','$mdDialog',function($s
         document.getElementById(chat).appendChild(div);
         document.getElementById(chat).scrollTop=document.getElementById(chat).scrollHeight;
         socket.emit('private message',chat+"#*@"+message+"#*@"+$scope.user);
+        $scope.message=null;
     }
 //    socket.emit('depart',$scope.user);
     
@@ -147,8 +160,16 @@ app.controller('myController',['$scope','socket','$http','$mdDialog',function($s
         });
     };
 }]);
-app.directive('myMsg',function(){
-    return {
-        template: 'Name: {{customer.name}} Address: {{customer.address}}'
+app.directive('myEnter', function () {
+    return function (scope, element, attrs) {
+        element.bind("keydown keypress", function (event) {
+            if(event.which === 13) {
+                scope.$apply(function (){
+                    scope.$eval(attrs.myEnter);
+                });
+
+                event.preventDefault();
+            }
+        });
     };
 });
