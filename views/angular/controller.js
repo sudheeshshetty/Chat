@@ -15,11 +15,14 @@ app.factory('socket', ['$rootScope', function($rootScope) {
 
 app.controller('myController',['$scope','socket','$http','$mdDialog',function($scope,socket,$http,$mdDialog){
     $scope.users=[];
+    $scope.friends=[];
+
     socket.on('handle', function(data) {
         $scope.user = data;
     });
+
     var monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October","November", "December"];
-    $scope.friends=[];
+
     socket.on('users', function(data) {
         $scope.$apply(function () {
             $scope.users=[];
@@ -31,8 +34,8 @@ app.controller('myController',['$scope','socket','$http','$mdDialog',function($s
             console.log($scope.users);
         });
     });
-    
-    
+
+
     $scope.showConfirm = function(data) {
         // Appending dialog to document.body to cover sidenav in docs app
         var confirm = $mdDialog.confirm()
@@ -49,117 +52,101 @@ app.controller('myController',['$scope','socket','$http','$mdDialog',function($s
             }})
         }, function() {
             data['confirm']="No";
-            
+
             $http({method: 'POST',url:'http://localhost:8080/friend_request/confirmed', data:data, headers:{
                 'Content-Type': 'application/json'
             }})
         });
     };
-//    console.log($scope.status);
-    
 
     socket.on('message', function(data) {
         $scope.showConfirm(data);
     });
-    
+
     socket.on('friend', function(data) {
         console.log("Connection Established"+data);
         $scope.$apply(function () {
-            $scope.friends.push(data);
+            if (!$scope.friends.includes(data)){
+                $scope.friends.push(data);
+            }
+
         });
     });
-    
+
     $scope.friend_request = function(user) {   
         $scope.friend = user;
     };
-    
-//    $scope.live_chat=[];
-//    
-//    $scope.chat = function(my_handle, friend_handle){
-//        $scope.live_chat.push(my_handle+" "+friend_handle);
-//        $scope.$apply();
-//        console.log("livechat"+$scope.live_chat);
-//        socket.on(my_handle+" "+friend_handle,function(msg){
-//            console.log('message  :'+msg);
-//        }); 
-//    };
-    
-    getDate=function(){
+
+    var getDate=function(){
         date = new Date();
         hour=date.getHours();
         period="AM";
         if (hour>12){
-            hour=hour/12;
+            hour=hour%12;
             period="PM";
         }
         form_date=monthNames[date.getMonth()]+" "+date.getDate()+", "+hour+":"+date.getMinutes()+" "+period;
         return form_date;        
     }
-    
-    socket.on('private message', function(data) {
-        console.log(data.split("#*@")[0]+" "+data.split("#*@")[1]);
-        
-        
-        var d = document.createElement('div');
-        str='<div class="direct-chat-msg right">\
+
+    socket.on('private message', function(data) {        
+        var div = document.createElement('div');
+        div.innerHTML='<div class="direct-chat-msg right">\
                         <div class="direct-chat-info clearfix">\
                         <span class="direct-chat-name pull-right">'+data.split("#*@")[2]+'</span>\
-<span class="direct-chat-timestamp pull-left">'+getDate()+'</span>\
+                        <span class="direct-chat-timestamp pull-left">'+getDate()+'</span>\
                         </div>\
                         <img class="direct-chat-img" src="/views/dist/img/user3-128x128.jpg" alt="message user image">\
                         <div class="direct-chat-text">'
                         +data.split("#*@")[1]+
                         '</div>\
                         </div>';
-        console.log(str);
-        d.innerHTML=str;
-        document.getElementById(data.split("#*@")[2]).appendChild(d);
+        document.getElementById(data.split("#*@")[2]).appendChild(div);
         document.getElementById(data.split("#*@")[2]).scrollTop=document.getElementById(data.split("#*@")[2]).scrollHeight;        
     });
-    
+
     $scope.send_message=function(chat,message){
-        console.log(chat+" "+message);
         div = document.createElement('div');
         div.innerHTML='<div class="direct-chat-msg"> \
-                                                  <div class="direct-chat-info clearfix">\
-                                                  <span class="direct-chat-name pull-left">'+$scope.user+'</span>\
-<span class="direct-chat-timestamp pull-right">'+getDate()+'</span>\
-                                                  </div>\
-                                                  <img class="direct-chat-img" src="/views/dist/img/user1-128x128.jpg"\ alt="message user image">\
-                                                  <div class="direct-chat-text">'
-                                                  +message+
-                                                  '</div>\
-                                                  </div>';
+                        <div class="direct-chat-info clearfix">\
+                        <span class="direct-chat-name pull-left">'+$scope.user+'</span>\
+                        <span class="direct-chat-timestamp pull-right">'+getDate()+'</span>\
+                        </div>\
+                        <img class="direct-chat-img" src="/views/dist/img/user1-128x128.jpg"\ alt="message user image">\
+                        <div class="direct-chat-text">'
+                        +message+
+                        '</div>\
+                        </div>';
         document.getElementById(chat).appendChild(div);
         document.getElementById(chat).scrollTop=document.getElementById(chat).scrollHeight;
         socket.emit('private message',chat+"#*@"+message+"#*@"+$scope.user);
         $scope.message=null;
     }
-//    socket.emit('depart',$scope.user);
-    
-    $scope.confirm=function(){
 
-        console.log("Sss"+$scope.friend);
+    $scope.confirm=function(){
         var data = {
             "friend_handle":$scope.friend,
             "my_handle":$scope.user
         };
-        console.log(data);
 
         var config = {
             headers : {
                 'Content-Type': 'application/json'
             }
-        }
+        };
+
         $http({method: 'POST',url:'http://localhost:8080/friend_request', data:data, headers:config})
             .success(function (data) {
             console.log(data)
         })
             .error(function (data) {
+            //add error handling
             console.log(data)
         });
     };
 }]);
+
+
 app.directive('myEnter', function () {
     return function (scope, element, attrs) {
         element.bind("keydown keypress", function (event) {

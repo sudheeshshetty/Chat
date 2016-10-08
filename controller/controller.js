@@ -132,10 +132,8 @@ module.exports = function (app,io){
     });
     
     app.post('/friend_request',function(req,res){
-        console.log("confirm");
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader("Access-Control-Allow-Method","'GET, POST, OPTIONS, PUT, PATCH, DELETE'");
-        console.log("body"+req.body.my_handle);
         models.user.update({
             handle:req.body.my_handle
         },{
@@ -147,13 +145,11 @@ module.exports = function (app,io){
             }
         },{upsert:true},function(err,doc){
             if(err){res.json(err);}
-            else{
-                console.log(doc);
-            }
+//            else{
+//                console.log(doc);
+//            }
         });
-        console.log(users[req.body.friend_handle]);
         io.to(users[req.body.friend_handle]).emit('message', req.body);
-        res.send("Sent");
     });
     
     app.post('/friend_request/confirmed',function(req,res){
