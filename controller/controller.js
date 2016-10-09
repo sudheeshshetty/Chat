@@ -20,7 +20,6 @@ module.exports = function (app,io){
             "handle":req.body.handle,
             "phone":req.body.phone,
             "email":req.body.email,
-            "chat":null
         };
         console.log(user);
         
@@ -69,65 +68,45 @@ module.exports = function (app,io){
         console.log("User is connected  "+handle);
         console.log(socket.id);
         io.to(socket.id).emit('handle', handle);
-
-        //                    models.user.update({"handle":handle},{'$set':{'connection_id':socket.id,}},function(err,doc){
-        //                        if (err){ return res.send(500, { error: err });}
-        //                        else{
-        //                            console.log("succesfully saved"+socket.id);
-        //                        }
-        //                    })
-//        models.online.create({"handle":handle,"connection_id":socket.id},function(err,doc){
-//            if(err) res.json(err);
-//            else{
-//                console.log("inside create");
-//                models.online.find({},function(err,doc){
-//                    if(err){res.json(err);}
-//                    else {io.emit('chat message',doc);
-//                         io.emit('self',{"handle":handle,"connection_id":socket.id});
-//                         } 
-//                });
-//            }
-//        });
+        models.user.find({"handle" : handle},{friends:1,_id:0},function(err,doc){
+            if(err){res.json(err);}
+            else{
+                list=doc[0].friends.slice();
+                console.log(list);
+                friends=[];
+                pending=[];
+                for(var i in list){
+                    if(list[i].status=="Friend"){
+                        friends.push(list[i].name);
+                    }
+                    else if (list[i].status=="Pending"){
+                        pending.push(list[i].name);
+                    }
+                    else{
+                        continue;
+                    }
+                }
+                console.log(friends);
+                console.log(pending+"pending");
+                io.to(socket.id).emit('friend_list', friends);
+                io.to(socket.id).emit('pending_list', pending);
+            }
+        });
         
         users[handle]=socket.id;
         keys[socket.id]=handle;
         console.log(users);
         io.emit('users',users);
-        
-
-//        private=function(data){
-//            console.log("In here  "+data.my_handle+" "+data.friend_handle+socket.id);
-//            ev=data.my_handle+" "+data.friend_handle;
-//            socket.on(ev,function(msg){
-//                console.log("still in");
-//                console.log('private  :'+msg);
-//                io.emit(data.my_handle+" "+data.friend_handle,msg);
-//            });
-//        };
-//
         socket.on('private message',function(msg){
             console.log('message  :'+msg.split("#*@")[0]);
             io.to(users[msg.split("#*@")[0]]).emit('private message', msg);
         });
-//        socket.on('depart', function(doc) {
-//            delete users[doc];
-//            io.emit('users',users);
-//        });
+        
         socket.on('disconnect', function(){
             delete users[keys[socket.id]];
             delete keys[socket.id];
             io.emit('users',users);
             console.log(users);
-//            models.online.remove({"connection_id":socket.id},function(err,doc){
-//                if(err) res.json(err);
-//                else{
-//                    console.log("inside remove");
-//                    models.online.find({},function(err,doc){
-//                        if(err){res.json(err);}
-//                        else {io.emit('chat message',doc);} 
-//                    });
-//                }
-//            });
         });
     });
     
@@ -137,7 +116,7 @@ module.exports = function (app,io){
         models.user.update({
             handle:req.body.my_handle
         },{
-            $set:{
+            $push:{
                 friends:{
                     name: req.body.friend_handle,
                     status: "Pending"
@@ -155,12 +134,18 @@ module.exports = function (app,io){
     app.post('/friend_request/confirmed',function(req,res){
         console.log(req.body);
         if(req.body.confirm=="Yes"){
-        models.user.update({"handle":req.body.my_handle},{'$set':{'friends':{"name":req.body.friend_handle,"status":"Friend"}}},{upsert:true},function(err,doc){
+        models.user.update({
+            "handle":req.body.my_handle,
+            "friends.name":req.body.friend_handle
+        },{
+            '$set':{
+                "friends.$.status":"Friend"
+            }
+        },function(err,doc){
             if(err){res.json(err);}
             else{
 
                 console.log("Inside yes confirmed");
-//                private(req.body);
                 io.to(users[req.body.friend_handle]).emit('friend', req.body.my_handle);
                 io.to(users[req.body.my_handle]).emit('friend', req.body.friend_handle);
             }

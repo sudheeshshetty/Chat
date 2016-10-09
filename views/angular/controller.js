@@ -72,6 +72,18 @@ app.controller('myController',['$scope','socket','$http','$mdDialog',function($s
 
         });
     });
+    
+    socket.on('friend_list', function(data) {
+        console.log(data);
+        $scope.$apply(function () {
+            $scope.friends.push.apply($scope.friends,data);
+        });
+        console.log($scope.friends);
+    });
+    
+    socket.on('pending_list', function(data) {
+
+    });
 
     $scope.friend_request = function(user) {   
         $scope.friend = user;

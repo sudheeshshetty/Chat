@@ -17,7 +17,7 @@ module.exports.user=mongoose.model('User',new Schema({
     handle: String,
     phone:String,
     email:String,
-    chat:Object
+    friends:[]
 },{strict: false}));
 module.exports.online=mongoose.model('online',new Schema({
     handle:String,
