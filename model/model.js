@@ -1,7 +1,9 @@
 var mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
-mongoose.connect('mongodb://localhost:27017/chat');
+
+mongoose.connect("mongodb://localhost:27017/chat");
+
 mongoose.connection.on('open', function (ref) {
     console.log('Connected to mongo server.');
 });

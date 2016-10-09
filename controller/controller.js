@@ -149,7 +149,23 @@ module.exports = function (app,io){
                 io.to(users[req.body.friend_handle]).emit('friend', req.body.my_handle);
                 io.to(users[req.body.my_handle]).emit('friend', req.body.friend_handle);
             }
-        });}
+        });
+            models.user.update({
+                handle:req.body.friend_handle
+            },{
+                $push:{
+                    friends:{
+                        name: req.body.my_handle,
+                        status: "Friend"
+                    }
+                }
+            },{upsert:true},function(err,doc){
+                if(err){res.json(err);}
+                //            else{
+                //                console.log(doc);
+                //            }
+            });
+        }
         else{
             
             console.log("Inside No confirmed");
