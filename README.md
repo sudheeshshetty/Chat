@@ -29,10 +29,13 @@ Your server will be setup and ready for use.
 I had seen a lot of times during local camps that people find it difficult to interact with each other may be due to hesitation. Most of the local chats that we find will be again public and the interactions become public. So I was thinking of creating an application where people can talk in public as well as private.
 
 # Few Screen Shots
-![Sending request to chat](https://github.com/sudheeshshetty/Chat/blob/master/screenshots/sending_request.png "Sending Request")  
-![Recieving request to chat](/screenshots/recieving_request.png?raw=true "Recieving Request")  
-![online users](/screenshots/online_users.png?raw=true "Online users")  
-![Chatting](/screenshots/chat.png?raw=true "Chatting with Friend")
+### Sending request
+![Sending request to chat](https://github.com/sudheeshshetty/Chat/blob/master/screenshots/sending_request.png "Sending Request") ### Recieving request 
+![Recieving request to chat](https://github.com/sudheeshshetty/Chat/blob/master/screenshots/recieving_request.png "Recieving Request")  
+### Online users
+![online users](https://github.com/sudheeshshetty/Chat/blob/master/screenshots/online_users.png "Online users")  
+### Chatting with Friend
+![Chatting](https://github.com/sudheeshshetty/Chat/blob/master/screenshots/sending_request.png/chat.png? "Chatting with Friend")
 
 # Upcoming
 I have lot of things to do. 
