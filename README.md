@@ -30,7 +30,8 @@ I had seen a lot of times during local camps that people find it difficult to in
 
 # Few Screen Shots
 ### Sending request
-![Sending request to chat](https://github.com/sudheeshshetty/Chat/blob/master/screenshots/sending_request.png "Sending Request")  ### Recieving request 
+![Sending request to chat](https://github.com/sudheeshshetty/Chat/blob/master/screenshots/sending_request.png "Sending Request")  
+### Recieving request 
 ![Recieving request to chat](https://github.com/sudheeshshetty/Chat/blob/master/screenshots/recieving_request.png "Recieving Request")  
 ### Online users
 ![online users](https://github.com/sudheeshshetty/Chat/blob/master/screenshots/online_users.png "Online users")  
