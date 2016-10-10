@@ -1,90 +1,70 @@
-<html lang="en" >
-    <head>
-        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
-        <script language="javascript">
-            angular
-                .module('firstApplication', ['ngMaterial'])
-                .controller('dialogController', dialogController);
+<div class="col-md-6" >
+    <!-- DIRECT CHAT -->
+    <div class="box box-warning direct-chat direct-chat-warning" ng-repeat="friend in friends track by $index">
+        <div class="box-header with-border">
+            <h3 class="box-title" id="event_name">{{friend}}</h3>
 
-            function dialogController ($scope, $mdDialog) {
-                $scope.status = '';
-                $scope.items = [1,2,3,4,5];
-                $scope.showAlert = function(ev) {
-                    $mdDialog.show(
-                        $mdDialog.alert()
-                        .parent(angular.element(document.querySelector('#dialogContainer')))
-                        .clickOutsideToClose(true)
-                        .title('TutorialsPoint.com')
-                        .textContent('Welcome to TutorialsPoint.com')
-                        .ariaLabel('Welcome to TutorialsPoint.com')
-                        .ok('Ok!')
-                        .targetEvent(ev)
-                    );
-                };
+            <div class="box-tools pull-right">
+                <!--                    <span data-toggle="tooltip" title="3 New Messages" class="badge bg-yellow">3</span>-->
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
 
+                </button>
+                <!--
+<button type="button" class="btn btn-box-tool" data-toggle="tooltip" title="Contacts" data-widget="chat-pane-toggle">
+<i class="fa fa-comments"></i></button>
+-->
 
-                $scope.showConfirm = function(event) {
-                    var confirm = $mdDialog.confirm()
-                    .title('Are you sure to delete the record?')
-                    .textContent('Record will be deleted permanently.')
-                    .ariaLabel('TutorialsPoint.com')
-                    .targetEvent(event)
-                    .ok('Yes')
-                    .cancel('No');
-                    $mdDialog.show(confirm).then(function() {
-                        $scope.status = 'Record deleted successfully!';
-                    }, function() {
-                        $scope.status = 'You decided to keep your record.';
-                    });
-                };
-
-                $scope.showCustom = function(event) {
-                    $mdDialog.show({
-                        clickOutsideToClose: true,
-                        scope: $scope,        
-                        preserveScope: true,           
-                        template: '<md-dialog>' +
-                        '  <md-dialog-content>' +
-                        '     Welcome to TutorialsPoint.com' +
-                        '  </md-dialog-content>' +
-                        '</md-dialog>',
-                        controller: function DialogController($scope, $mdDialog) {
-                            $scope.closeDialog = function() {
-                                $mdDialog.hide();
-                            }
-                        }
-                    });
-                };
-            }                 
-        </script>      
-    </head>
-    <body ng-app="firstApplication"> 
-        <div id="dialogContainer" ng-controller="dialogController as ctrl" layout="row" ng-cloak>
-            <md-content>
-                <h4>Standard Alert</h4>
-                <md-button class="md-primary md-raised" ng-click="showAlert($event)" flex="100"  flex-gt-md="auto">
-                    Alert
-                </md-button>
-                <h4>Confirm Dialog Box</h4>
-                <md-button class="md-primary md-raised" ng-click="showConfirm($event)"  flex="100"  flex-gt-md="auto">
-                    Confirm
-                </md-button>
-                <h4>Custom Dialog Box</h4>
-                <md-button class="md-primary md-raised" ng-click="showCustom($event)"  flex="100"  flex-gt-md="auto">
-                    Custom
-                </md-button>
-                <div ng-if="status">
-                    <br/>
-                    <b layout="row" layout-align="center center" class="md-padding">
-                        {{status}}
-                    </b>
-                </div>
-            </md-content>	 
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i>
+                </button>
+            </div>
         </div>
-    </body>
-</html>
+        <!-- /.box-header -->
+        <div class="box-body">
+            <!-- Conversations are loaded here -->
+            <div class="direct-chat-messages" id="{{friend}}">
+
+            </div>
+            <!--/.direct-chat-messages-->
+
+            <!-- Contacts are loaded here -->
+            <div class="direct-chat-contacts">
+                <ul class="contacts-list">
+
+                    <!--
+<li>
+<a href="#">
+<img class="contacts-list-img" src="dist/img/user8-128x128.jpg" alt="User Image">
+
+<div class="contacts-list-info">
+<span class="contacts-list-name">
+Kenneth M.
+<small class="contacts-list-date pull-right">1/4/2015</small>
+</span>
+<span class="contacts-list-msg">Never mind I found...</span>
+</div>
+
+</a>
+</li>
+-->
+                    <!-- End Contact Item -->
+                </ul>
+                <!-- /.contatcts-list -->
+            </div>
+            <!-- /.direct-chat-pane -->
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer">
+            <div>
+                <div class="input-group">
+                    <input type="text" name="message" placeholder="Type Message ..." class="form-control" ng-model="message" my-enter="send_message('{{friend}}','{{message}}')">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-warning btn-flat" ng-click="send_message(friend,message)">Send</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <!-- /.box-footer-->
+    </div>
+    <!--/.direct-chat -->
+</div>
+<!-- /.col -->

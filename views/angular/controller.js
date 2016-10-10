@@ -156,6 +156,111 @@ app.controller('myController',['$scope','socket','$http','$mdDialog',function($s
             console.log(data)
         });
     };
+    var popups=[];
+    $scope.chat_popup = function(chat_friend){
+        console.log(chat_friend);
+        for(var iii = 0; iii < popups.length; iii++)
+        {   
+            //already registered. Bring it to front.
+            if(id == popups[iii])
+            {
+                Array.remove(popups, iii);
+
+                popups.unshift(chat_friend);
+
+                calculate_popups();
+
+
+                return;
+            }
+        }
+        var element = '<div class="popup-box chat-popup" id="'+ chat_friend +'">';
+        element = element + '<div class="popup-head">';
+        element = element + '<div class="popup-head-left">'+ chat_friend +'</div>';
+        element = element + '<div class="popup-head-right"><a href="" ng-click="close_popup(\''+ chat_friend +'\');">&#10005;</a></div>';
+        element = element + '<div style="clear: both"></div></div><div class="popup-messages"></div></div>';
+
+        document.getElementsByTagName("body")[0].innerHTML = document.getElementsByTagName("body")[0].innerHTML + element;  
+
+        popups.unshift(chat_friend);
+
+        calculate_popups();
+        
+    }
+    
+    //this function can remove a array element.
+    Array.remove = function(array, from, to) {
+        var rest = array.slice((to || from) + 1 || array.length);
+        array.length = from < 0 ? array.length + from : from;
+        return array.push.apply(array, rest);
+    };
+
+    //this variable represents the total number of popups can be displayed according to the viewport width
+    var total_popups = 0;
+
+    //this is used to close a popup
+    $scope.close_popup= function(id)
+    {
+        for(var iii = 0; iii < popups.length; iii++)
+        {
+            if(id == popups[iii])
+            {
+                Array.remove(popups, iii);
+
+                document.getElementById(id).style.display = "none";
+
+                calculate_popups();
+
+                return;
+            }
+        }   
+    }
+    //displays the popups. Displays based on the maximum number of popups that can be displayed on the current viewport width
+    function display_popups()
+    {
+        var right = 220;
+
+        var iii = 0;
+        for(iii; iii < total_popups; iii++)
+        {
+            if(popups[iii] != undefined)
+            {
+                var element = document.getElementById(popups[iii]);
+                element.style.right = right + "px";
+                right = right + 320;
+                element.style.display = "block";
+            }
+        }
+
+        for(var jjj = iii; jjj < popups.length; jjj++)
+        {
+            var element = document.getElementById(popups[jjj]);
+            element.style.display = "none";
+        }
+    }
+    
+    //calculate the total number of popups suitable and then populate the toatal_popups variable.
+    function calculate_popups()
+    {
+        var width = window.innerWidth;
+        if(width < 540)
+        {
+            total_popups = 0;
+        }
+        else
+        {
+            width = width - 200;
+            //320 is width of a single popup box
+            total_popups = parseInt(width/320);
+        }
+
+        display_popups();
+    }
+
+    //recalculate when window is loaded and also when window is resized.
+    window.addEventListener("resize", calculate_popups);
+    window.addEventListener("load", calculate_popups);
+    
 }]);
 
 

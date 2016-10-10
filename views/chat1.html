@@ -34,6 +34,9 @@
     <!----CSS----->
     <!---angular material-->
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+    
+    <!--- Custom css--->
+    <link rel="stylesheet" href="/views/css/style.css">
 
     <!-- Bootstrap 3.3.6 -->
     <link rel="stylesheet" href="/views/bootstrap/css/bootstrap.min.css">
@@ -55,82 +58,12 @@
 
           <!-- /.box -->
           <div class="row">
-              <div class="col-md-6" >
-              <!-- DIRECT CHAT -->
-                  <div class="box box-warning direct-chat direct-chat-warning" ng-repeat="friend in friends track by $index">
-                      <div class="box-header with-border">
-                  <h3 class="box-title" id="event_name">{{friend}}</h3>
-
-                  <div class="box-tools pull-right">
-<!--                    <span data-toggle="tooltip" title="3 New Messages" class="badge bg-yellow">3</span>-->
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-
-                    </button>
-<!--
-                        <button type="button" class="btn btn-box-tool" data-toggle="tooltip" title="Contacts" data-widget="chat-pane-toggle">
-                          <i class="fa fa-comments"></i></button>
--->
-
-                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i>
-                    </button>
-                  </div>
-                </div>
-                <!-- /.box-header -->
-                <div class="box-body">
-                  <!-- Conversations are loaded here -->
-                  <div class="direct-chat-messages" id="{{friend}}">
-                      
-                  </div>
-                  <!--/.direct-chat-messages-->
-
-                  <!-- Contacts are loaded here -->
-                  <div class="direct-chat-contacts">
-                    <ul class="contacts-list">
-                      
-<!--
-                      <li>
-                        <a href="#">
-                          <img class="contacts-list-img" src="dist/img/user8-128x128.jpg" alt="User Image">
-
-                          <div class="contacts-list-info">
-                                <span class="contacts-list-name">
-                                  Kenneth M.
-                                  <small class="contacts-list-date pull-right">1/4/2015</small>
-                                </span>
-                            <span class="contacts-list-msg">Never mind I found...</span>
-                          </div>
-                          
-                        </a>
-                      </li>
--->
-                      <!-- End Contact Item -->
-                    </ul>
-                    <!-- /.contatcts-list -->
-                  </div>
-                  <!-- /.direct-chat-pane -->
-                </div>
-                <!-- /.box-body -->
-                <div class="box-footer">
-                  <div>
-                    <div class="input-group">
-                        <input type="text" name="message" placeholder="Type Message ..." class="form-control" ng-model="message" my-enter="send_message('{{friend}}','{{message}}')">
-                          <span class="input-group-btn">
-                              <button type="button" class="btn btn-warning btn-flat" ng-click="send_message(friend,message)">Send</button>
-                          </span>
-                    </div>
-                  </div>
-                </div>
-                <!-- /.box-footer-->
-              </div>
-              <!--/.direct-chat -->
-            </div>
-            <!-- /.col -->
-
-            <div class="col-md-6">
+            
+            <div class="col-md-3 pull-right">
               <!-- USERS LIST -->
               <div class="box box-danger">
                 <div class="box-header with-border">
-                  <h3 class="box-title">Latest Members</h3>
+                  <h3 class="box-title">Online Members</h3>
 
                   <div class="box-tools pull-right">
                     <span class="label label-danger">{{users.length}} Members</span>
@@ -160,6 +93,42 @@
               <!--/.box -->
             </div>
             <!-- /.col -->
+              
+              
+              <div class="col-md-3 pull-right">
+                  <!-- USERS LIST -->
+                  <div class="box box-danger">
+                      <div class="box-header with-border">
+                          <h3 class="box-title">Friends</h3>
+
+                          <div class="box-tools">
+                              <span class="label label-danger">{{friends.length}} Members</span>
+                              <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                              </button>
+                              <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i>
+                              </button>
+                          </div>
+                      </div>
+                      <!-- /.box-header -->
+                      <div class="box-body no-padding">
+                          <ul class="users-list clearfix" ng-repeat="friend in friends">
+                              <li>
+                                  <button  data-toggle="modal" ng-click="chat_popup(friend)"> 
+                                      <img src="/views/dist/img/user1-128x128.jpg" alt="User Image">
+                                      <a class="users-list-name">{{friend}}</a></button>
+                              </li>  
+                          </ul>
+                          <!-- /.users-list -->
+                      </div>
+                      <!-- /.box-body -->
+                      <div class="box-footer text-center">
+                          <a href="javascript:void(0)" class="uppercase">View All Users</a>
+                      </div>
+                      <!-- /.box-footer -->
+                  </div>
+                  <!--/.box -->
+              </div>
+              
           </div>
           <!-- /.row -->
     <!-- Modal -->
@@ -178,6 +147,100 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+    
+    <div class="popup-box chat-popup" id="qnimate">
+        <div class="popup-head">
+            <div class="popup-head-left pull-left"><img src="http://bootsnipp.com/img/avatars/bcf1c0d13e5500875fdd5a7e8ad9752ee16e7462.jpg" alt="iamgurdeeposahan"> Gurdeep Osahan</div>
+            <div class="popup-head-right pull-right">
+                <div class="btn-group">
+                    <button class="chat-header-button" data-toggle="dropdown" type="button" aria-expanded="false">
+                        <i class="glyphicon glyphicon-cog"></i> </button>
+                    <ul role="menu" class="dropdown-menu pull-right">
+                        <li><a href="#">Media</a></li>
+                        <li><a href="#">Block</a></li>
+                        <li><a href="#">Clear Chat</a></li>
+                        <li><a href="#">Email Chat</a></li>
+                    </ul>
+                </div>
+
+                <button data-widget="remove" id="removeClass" class="chat-header-button pull-right" type="button"><i class="glyphicon glyphicon-off"></i></button>
+            </div>
+        </div>
+        <div class="popup-messages">
+
+
+
+
+            <div class="direct-chat-messages">
+
+
+                <div class="chat-box-single-line">
+                    <abbr class="timestamp">October 8th, 2015</abbr>
+                </div>
+
+
+                <!-- Message. Default to the left -->
+                <div class="direct-chat-msg doted-border">
+                    <div class="direct-chat-info clearfix">
+                        <span class="direct-chat-name pull-left">Osahan</span>
+                    </div>
+                    <!-- /.direct-chat-info -->
+                    <img alt="message user image" src="http://bootsnipp.com/img/avatars/bcf1c0d13e5500875fdd5a7e8ad9752ee16e7462.jpg" class="direct-chat-img"><!-- /.direct-chat-img -->
+                    <div class="direct-chat-text">
+                        Hey bro, how’s everything going ?
+                    </div>
+                    <div class="direct-chat-info clearfix">
+                        <span class="direct-chat-timestamp pull-right">3.36 PM</span>
+                    </div>
+                    <div class="direct-chat-info clearfix">
+                        <span class="direct-chat-img-reply-small pull-left">
+
+                        </span>
+                        <span class="direct-chat-reply-name">Singh</span>
+                    </div>
+                    <!-- /.direct-chat-text -->
+                </div>
+                <!-- /.direct-chat-msg -->
+
+
+                <div class="chat-box-single-line">
+                    <abbr class="timestamp">October 9th, 2015</abbr>
+                </div>
+
+
+
+                <!-- Message. Default to the left -->
+                <div class="direct-chat-msg doted-border">
+                    <div class="direct-chat-info clearfix">
+                        <span class="direct-chat-name pull-left">Osahan</span>
+                    </div>
+                    <!-- /.direct-chat-info -->
+                    <img alt="iamgurdeeposahan" src="http://bootsnipp.com/img/avatars/bcf1c0d13e5500875fdd5a7e8ad9752ee16e7462.jpg" class="direct-chat-img"><!-- /.direct-chat-img -->
+                    <div class="direct-chat-text">
+                        Hey bro, how’s everything going ?
+                    </div>
+                    <div class="direct-chat-info clearfix">
+                        <span class="direct-chat-timestamp pull-right">3.36 PM</span>
+                    </div>
+                    <div class="direct-chat-info clearfix">
+                        <img alt="iamgurdeeposahan" src="http://bootsnipp.com/img/avatars/bcf1c0d13e5500875fdd5a7e8ad9752ee16e7462.jpg" class="direct-chat-img big-round">
+                        <span class="direct-chat-reply-name">Singh</span>
+                    </div>
+                    <!-- /.direct-chat-text -->
+                </div>
+                <!-- /.direct-chat-msg -->
+            </div>
+        </div>
+        <div class="popup-messages-footer">
+            <textarea id="status_message" placeholder="Type a message..." rows="10" cols="40" name="message"></textarea>
+            <div class="btn-footer">
+                <button class="bg_none"><i class="glyphicon glyphicon-film"></i> </button>
+                <button class="bg_none"><i class="glyphicon glyphicon-camera"></i> </button>
+                <button class="bg_none"><i class="glyphicon glyphicon-paperclip"></i> </button>
+                <button class="bg_none pull-right"><i class="glyphicon glyphicon-thumbs-up"></i> </button>
+            </div>
         </div>
     </div>
 </body>
