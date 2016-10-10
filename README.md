@@ -47,3 +47,6 @@ I have lot of things to do.
 
 # Suggestions
 If you have any suggestions please do mail me at `sudheeshshetty@gmail.com` with subject as `chat-suggestions`
+
+# Credits
+I have used some code from AdminLTE for the chat UI.
