@@ -13,7 +13,7 @@ app.factory('socket', ['$rootScope', function($rootScope) {
     };
 }]);
 
-app.controller('myController',['$scope','socket','$http','$mdDialog',function($scope,socket,$http,$mdDialog){
+app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',function($scope,socket,$http,$mdDialog,$compile){
     $scope.users=[];
     $scope.friends=[];
 
@@ -156,110 +156,91 @@ app.controller('myController',['$scope','socket','$http','$mdDialog',function($s
             console.log(data)
         });
     };
-    var popups=[];
+    
+    popups=[];
+    
     $scope.chat_popup = function(chat_friend){
         console.log(chat_friend);
+        console.log(popups);
         for(var iii = 0; iii < popups.length; iii++)
         {   
             //already registered. Bring it to front.
-            if(id == popups[iii])
+            if($scope.chat_friend == popups[iii])
             {
-                Array.remove(popups, iii);
+                popups.splice(iii,1);
 
-                popups.unshift(chat_friend);
+                popups.push(chatfriend);
 
-                calculate_popups();
-
-
-                return;
+                display_popups();
             }
         }
-        var element = '<div class="popup-box chat-popup" id="'+ chat_friend +'">';
-        element = element + '<div class="popup-head">';
-        element = element + '<div class="popup-head-left">'+ chat_friend +'</div>';
-        element = element + '<div class="popup-head-right"><a href="" ng-click="close_popup(\''+ chat_friend +'\');">&#10005;</a></div>';
-        element = element + '<div style="clear: both"></div></div><div class="popup-messages"></div></div>';
-
-        document.getElementsByTagName("body")[0].innerHTML = document.getElementsByTagName("body")[0].innerHTML + element;  
-
-        popups.unshift(chat_friend);
-
-        calculate_popups();
+        
+        
+        div = document.createElement('div');
+        div.innerHTML='<div class="popup-box popup-box-on chat-popup" id="'+chat_friend+'01">\
+<div class="popup-head">\
+<div class="popup-head-left pull-left"><img alt="pic">'+chat_friend+'</div>\
+<div class="popup-head-right pull-right">\
+<div class="btn-group">\
+<button class="chat-header-button" data-toggle="dropdown" type="button" aria-expanded="false">\
+<i class="glyphicon glyphicon-cog"></i> </button>\
+<ul role="menu" class="dropdown-menu pull-right">\
+<li><a href="#">Block</a></li>\
+<li><a href="#">Clear Chat</a></li>\
+<li><a href="#">Email Chat</a></li>\
+</ul>\
+</div>\
+<button  ng-click="close_chat(\''+chat_friend+'\')" class="chat-header-button pull-right" type="button"><i class="glyphicon glyphicon-remove"></i></button>\
+</div>\
+</div>\
+<div class="popup-messages">\
+<div class="direct-chat-messages" id="'+chat_friend+'">\
+</div>\
+</div>\
+<div class="popup-messages-footer">\
+<textarea id="status_message" placeholder="Type a message..." rows="10" cols="40" ng-model="message" my-enter="send_message(\'{{'+chat_friend+'}}\',\'{{message}}\')"></textarea>\
+<div class="btn-footer">\
+<button class="bg_none"><i class="glyphicon glyphicon-film"></i> </button>\
+<button class="bg_none"><i class="glyphicon glyphicon-camera"></i> </button>\
+<button class="bg_none"><i class="glyphicon glyphicon-paperclip"></i> </button>\
+<button class="bg_none pull-right" ng-click="send_message('+chat_friend+',message)"><i class="glyphicon glyphicon-thumbs-up"></i> </button>\
+</div>\
+</div>\
+</div>';
+        $compile(div)($scope);
+        if(popups.length>1){
+            document.getElementById(chat_friend+"01").className=document.getElementById(popups[popups.length-2]+"01").className.replace(/(?:^|\s)popup-box-on(?!\S)/g , '');
+        }
+        var body=document.getElementsByTagName("body")[0];
+        body.appendChild(div);
+        console.log($scope.friends);
+//        $compile(body)($scope);
+        popups.push(chat_friend);
         
     }
-    
-    //this function can remove a array element.
-    Array.remove = function(array, from, to) {
-        var rest = array.slice((to || from) + 1 || array.length);
-        array.length = from < 0 ? array.length + from : from;
-        return array.push.apply(array, rest);
-    };
-
-    //this variable represents the total number of popups can be displayed according to the viewport width
-    var total_popups = 0;
-
+    console.log($scope.friends);
     //this is used to close a popup
-    $scope.close_popup= function(id)
+    $scope.close_chat= function(chat_friend)
     {
+        console.log(chat_friend);
+        console.log(popups);
         for(var iii = 0; iii < popups.length; iii++)
         {
-            if(id == popups[iii])
+            if(chat_friend == popups[iii])
             {
-                Array.remove(popups, iii);
-
-                document.getElementById(id).style.display = "none";
-
-                calculate_popups();
-
-                return;
+                console.log("sss");
+                document.getElementById(popups[popups.length-1]+"01").className=document.getElementById(popups[popups.length-1]+"01").className.replace(/(?:^|\s)popup-box-on(?!\S)/g , '');
+                popups.splice(iii,1);
             }
         }   
     }
+    
     //displays the popups. Displays based on the maximum number of popups that can be displayed on the current viewport width
     function display_popups()
     {
-        var right = 220;
-
-        var iii = 0;
-        for(iii; iii < total_popups; iii++)
-        {
-            if(popups[iii] != undefined)
-            {
-                var element = document.getElementById(popups[iii]);
-                element.style.right = right + "px";
-                right = right + 320;
-                element.style.display = "block";
-            }
-        }
-
-        for(var jjj = iii; jjj < popups.length; jjj++)
-        {
-            var element = document.getElementById(popups[jjj]);
-            element.style.display = "none";
-        }
+        document.getElementById(popups[popups.length-2]+"01").className=document.getElementById(popups[popups.length-2]+"01").className.replace(/(?:^|\s)popup-box-on(?!\S)/g , '');
+        document.getElementById(popups[popups.length-1]+"01").className += "popup-box-on";
     }
-    
-    //calculate the total number of popups suitable and then populate the toatal_popups variable.
-    function calculate_popups()
-    {
-        var width = window.innerWidth;
-        if(width < 540)
-        {
-            total_popups = 0;
-        }
-        else
-        {
-            width = width - 200;
-            //320 is width of a single popup box
-            total_popups = parseInt(width/320);
-        }
-
-        display_popups();
-    }
-
-    //recalculate when window is loaded and also when window is resized.
-    window.addEventListener("resize", calculate_popups);
-    window.addEventListener("load", calculate_popups);
     
 }]);
 
