@@ -113,11 +113,21 @@ app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',
                         +data.split("#*@")[1]+
                         '</div>\
                         </div>';
-        document.getElementById(data.split("#*@")[2]).appendChild(div);
+        var chat_box=document.getElementById(data.split("#*@")[2]);
+        console.log(chat_box);
+        if(chat_box!=null){
+            chat_box.appendChild(div);
+        }
+        else{
+            $scope.chat_popup(data.split("#*@")[2]);
+            document.getElementById(data.split("#*@")[2]).appendChild(div);
+        }
+        
         document.getElementById(data.split("#*@")[2]).scrollTop=document.getElementById(data.split("#*@")[2]).scrollHeight;        
     });
 
     $scope.send_message=function(chat,message){
+        console.log(chat);
         div = document.createElement('div');
         div.innerHTML='<div class="direct-chat-msg"> \
                         <div class="direct-chat-info clearfix">\
@@ -198,7 +208,7 @@ app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',
 </div>\
 </div>\
 <div class="popup-messages-footer">\
-<textarea id="status_message" placeholder="Type a message..." rows="10" cols="40" ng-model="message" my-enter="send_message(\'{{'+chat_friend+'}}\',\'{{message}}\')"></textarea>\
+<textarea id="status_message" placeholder="Type a message..." rows="10" cols="40" ng-model="message" my-enter="send_message(\''+chat_friend+'\',\'{{message}}\')"></textarea>\
 <div class="btn-footer">\
 <button class="bg_none"><i class="glyphicon glyphicon-film"></i> </button>\
 <button class="bg_none"><i class="glyphicon glyphicon-camera"></i> </button>\
