@@ -58,7 +58,30 @@
 
           <!-- /.box -->
           <div class="row">
-            
+                  <div class="col-md-6 pull-left">
+                      <div class="box box-warning direct-chat direct-chat-warning">
+                          <div class="box-header with-border">
+                              <h3 class="box-title">Group Chat</h3>
+                          </div>
+                          <div class="box-body">
+                              <!-- Conversations are loaded here -->
+                              <div class="direct-chat-messages" id="group">
+
+                              </div>
+                          </div>
+                          <div class="box-footer">
+                              <div>
+                                  <div class="input-group">
+                                      <input type="text" name="message" placeholder="Type Message ..." class="form-control" ng-model="groupMessage" my-enter="group_message('{{groupMessage}}')">
+                                      <span class="input-group-btn">
+                                          <button type="button" class="btn btn-warning btn-flat" ng-click="group_message(groupMessage)">Send</button>
+                                      </span>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              
             <div class="col-md-3 pull-right">
               <!-- USERS LIST -->
               <div class="box box-danger">
@@ -74,7 +97,7 @@
                   </div>
                 </div>
                 <!-- /.box-header -->
-                <div class="box-body no-padding">
+                  <div class="box-body direct-chat-messages">
                   <ul class="users-list clearfix" >
                       <li ng-repeat="user in users">
                         <button  data-toggle="modal" data-target="#myModal" ng-click="friend_request(user)"> 
@@ -86,7 +109,7 @@
                 </div>
                 <!-- /.box-body -->
                 <div class="box-footer text-center">
-                  <a href="javascript:void(0)" class="uppercase">View All Users</a>
+                  <a href="javascript:void(0)" class="uppercase">Something</a>
                 </div>
                 <!-- /.box-footer -->
               </div>
@@ -110,7 +133,7 @@
                           </div>
                       </div>
                       <!-- /.box-header -->
-                      <div class="box-body no-padding">
+                      <div class="box-body direct-chat-messages">
                           <ul class="users-list clearfix" >
                               <li ng-repeat="friend in friends track by $index">
                                   <button ng-click="chat_popup(friend)"> 
@@ -122,7 +145,7 @@
                       </div>
                       <!-- /.box-body -->
                       <div class="box-footer text-center">
-                          <a href="javascript:void(0)" class="uppercase">View All Users</a>
+                          <a href="javascript:void(0)" class="uppercase">Something</a>
                       </div>
                       <!-- /.box-footer -->
                   </div>

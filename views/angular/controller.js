@@ -16,6 +16,7 @@ app.factory('socket', ['$rootScope', function($rootScope) {
 app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',function($scope,socket,$http,$mdDialog,$compile){
     $scope.users=[];
     $scope.friends=[];
+    $scope.allfriends=[];
 
     socket.on('handle', function(data) {
         $scope.user = data;
@@ -23,19 +24,65 @@ app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',
 
     var monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October","November", "December"];
 
-    socket.on('users', function(data) {
+    socket.on('friend_list', function(data) {
+        console.log(data);
         $scope.$apply(function () {
-            $scope.users=[];
-            for(var i in data){
-                if (i!=$scope.user){
-                    $scope.users.push(i);
-                }
-            }
-            console.log($scope.users);
+            $scope.allfriends.push.apply($scope.allfriends,data);
         });
+        console.log($scope.allfriends);
     });
 
+    socket.on('pending_list', function(data) {
 
+    });
+
+    socket.on('users', function(data) {
+        console.log(data);
+        $scope.$apply(function () {
+            $scope.users=[];
+            $scope.friends=[];
+            for(var i in data){
+                if (i!=$scope.user){
+                    console.log(i);
+                    console.log($scope.allfriends);
+                    if ( $scope.allfriends.includes(i) ){
+                        console.log("asasa");
+                        $scope.friends.push(i);
+                    }
+                    else{
+                        $scope.users.push(i);                        
+                    }
+                    
+                }
+            }
+            console.log($scope.allfriends);
+            console.log($scope.users);
+            console.log($scope.friends);
+        });
+    });
+    
+    $scope.confirm=function(){
+        var data = {
+            "friend_handle":$scope.friend,
+            "my_handle":$scope.user
+        };
+
+        var config = {
+            headers : {
+                'Content-Type': 'application/json'
+            }
+        };
+
+        $http({method: 'POST',url:'http://localhost:8080/friend_request', data:data, headers:config})
+            .success(function (data) {
+            console.log(data)
+        })
+            .error(function (data) {
+            //add error handling
+            console.log(data)
+        });
+    };
+    
     $scope.showConfirm = function(data) {
         // Appending dialog to document.body to cover sidenav in docs app
         var confirm = $mdDialog.confirm()
@@ -68,22 +115,18 @@ app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',
         $scope.$apply(function () {
             if (!$scope.friends.includes(data)){
                 $scope.friends.push(data);
+                $scope.users.splice($scope.users.indexOf(data));
             }
 
         });
     });
-    
-    socket.on('friend_list', function(data) {
-        console.log(data);
-        $scope.$apply(function () {
-            $scope.friends.push.apply($scope.friends,data);
-        });
-        console.log($scope.friends);
-    });
-    
-    socket.on('pending_list', function(data) {
-
-    });
+//    
+//    socket.on('all_friend_list', function(data) {
+//        $scope.$apply(function () {
+//            $scope.allfriends.push.apply($scope.allfriends,data);
+//        });
+//    });
+//    
 
     $scope.friend_request = function(user) {   
         $scope.friend = user;
@@ -100,12 +143,49 @@ app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',
         form_date=monthNames[date.getMonth()]+" "+date.getDate()+", "+hour+":"+date.getMinutes()+" "+period;
         return form_date;        
     }
+    
+    
+    socket.on('group', function(data) {
+        var div = document.createElement('div');
+        if(data.split("#*@")[1]!=$scope.user){
+            div.innerHTML='<div class="direct-chat-msg right">\
+                            <div class="direct-chat-info clearfix">\
+                            <span class="direct-chat-name pull-right">'+data.split("#*@")[1]+'</span>\
+                            <span class="direct-chat-timestamp pull-left">'+getDate()+'</span>\
+                            </div>\
+                            <img class="direct-chat-img" src="/views/dist/img/user3-128x128.jpg" alt="message user image">\
+                            <div class="direct-chat-text">'
+                            +data.split("#*@")[0]+
+                            '</div>\
+                            </div>';
+            document.getElementById("group").appendChild(div);
+            document.getElementById("group").scrollTop=document.getElementById("group").scrollHeight;
+        }
+    });
+    
+    $scope.group_message= function(message){
+        div = document.createElement('div');
+        div.innerHTML='<div class="direct-chat-msg"> \
+                        <div class="direct-chat-info clearfix">\
+                        <span class="direct-chat-name pull-left">'+$scope.user+'</span>\
+                        <span class="direct-chat-timestamp pull-right">'+getDate()+'</span>\
+                        </div>\
+                        <img class="direct-chat-img" src="/views/dist/img/user1-128x128.jpg"\ alt="message user image">\
+                        <div class="direct-chat-text">'
+                        +message+
+                        '</div>\
+                        </div>';
+        document.getElementById("group").appendChild(div);
+        document.getElementById("group").scrollTop=document.getElementById("group").scrollHeight;
+        socket.emit('group message',message+"#*@"+$scope.user);
+        $scope.groupMessage=null;
+    }
 
     socket.on('private message', function(data) {        
         var div = document.createElement('div');
         div.innerHTML='<div class="direct-chat-msg right">\
                         <div class="direct-chat-info clearfix">\
-                        <span class="direct-chat-name pull-right">'+data.split("#*@")[2]+'</span>\
+                        <span class="direct-chat-name pull-right    ">'+data.split("#*@")[2]+'</span>\
                         <span class="direct-chat-timestamp pull-left">'+getDate()+'</span>\
                         </div>\
                         <img class="direct-chat-img" src="/views/dist/img/user3-128x128.jpg" alt="message user image">\
@@ -122,7 +202,7 @@ app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',
             $scope.chat_popup(data.split("#*@")[2]);
             document.getElementById(data.split("#*@")[2]).appendChild(div);
         }
-        
+
         document.getElementById(data.split("#*@")[2]).scrollTop=document.getElementById(data.split("#*@")[2]).scrollHeight;        
     });
 
@@ -145,27 +225,6 @@ app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',
         $scope.message=null;
     }
 
-    $scope.confirm=function(){
-        var data = {
-            "friend_handle":$scope.friend,
-            "my_handle":$scope.user
-        };
-
-        var config = {
-            headers : {
-                'Content-Type': 'application/json'
-            }
-        };
-
-        $http({method: 'POST',url:'http://localhost:8080/friend_request', data:data, headers:config})
-            .success(function (data) {
-            console.log(data)
-        })
-            .error(function (data) {
-            //add error handling
-            console.log(data)
-        });
-    };
     
     popups=[];
     
@@ -188,35 +247,35 @@ app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',
         
         div = document.createElement('div');
         div.innerHTML='<div class="popup-box popup-box-on chat-popup" id="'+chat_friend+'01">\
-<div class="popup-head">\
-<div class="popup-head-left pull-left"><img alt="pic">'+chat_friend+'</div>\
-<div class="popup-head-right pull-right">\
-<div class="btn-group">\
-<button class="chat-header-button" data-toggle="dropdown" type="button" aria-expanded="false">\
-<i class="glyphicon glyphicon-cog"></i> </button>\
-<ul role="menu" class="dropdown-menu pull-right">\
-<li><a href="#">Block</a></li>\
-<li><a href="#">Clear Chat</a></li>\
-<li><a href="#">Email Chat</a></li>\
-</ul>\
-</div>\
-<button  ng-click="close_chat(\''+chat_friend+'\')" class="chat-header-button pull-right" type="button"><i class="glyphicon glyphicon-remove"></i></button>\
-</div>\
-</div>\
-<div class="popup-messages">\
-<div class="direct-chat-messages" id="'+chat_friend+'">\
-</div>\
-</div>\
-<div class="popup-messages-footer">\
-<textarea id="status_message" placeholder="Type a message..." rows="10" cols="40" ng-model="message" my-enter="send_message(\''+chat_friend+'\',\'{{message}}\')"></textarea>\
-<div class="btn-footer">\
-<button class="bg_none"><i class="glyphicon glyphicon-film"></i> </button>\
-<button class="bg_none"><i class="glyphicon glyphicon-camera"></i> </button>\
-<button class="bg_none"><i class="glyphicon glyphicon-paperclip"></i> </button>\
-<button class="bg_none pull-right" ng-click="send_message('+chat_friend+',message)"><i class="glyphicon glyphicon-thumbs-up"></i> </button>\
-</div>\
-</div>\
-</div>';
+                        <div class="popup-head">\
+                        <div class="popup-head-left pull-left"><img alt="pic">'+chat_friend+'</div>\
+                        <div class="popup-head-right pull-right">\
+                        <div class="btn-group">\
+                        <button class="chat-header-button" data-toggle="dropdown" type="button" aria-expanded="false">\
+                        <i class="glyphicon glyphicon-cog"></i> </button>\
+                        <ul role="menu" class="dropdown-menu pull-right">\
+                        <li><a href="#">Block</a></li>\
+                        <li><a href="#">Clear Chat</a></li>\
+                        <li><a href="#">Email Chat</a></li>\
+                        </ul>\
+                        </div>\
+                        <button  ng-click="close_chat(\''+chat_friend+'\')" class="chat-header-button pull-right" type="button">  <i class="glyphicon glyphicon-remove"></i></button>\
+                        </div>\
+                        </div>\
+                        <div class="box-body popup-messages">\
+                        <div class="direct-chat-messages" id="'+chat_friend+'">\
+                        </div>\
+                        </div>\
+                        <div class="popup-messages-footer">\
+                        <textarea id="status_message" placeholder="Type a message..." rows="10" cols="40" ng-model="message" my-enter="send_message(\''+chat_friend+'\',\'{{message}}\')"></textarea>\
+                        <div class="btn-footer">\
+                        <button class="bg_none"><i class="glyphicon glyphicon-film"></i> </button>\
+                        <button class="bg_none"><i class="glyphicon glyphicon-camera"></i> </button>\
+                        <button class="bg_none"><i class="glyphicon glyphicon-paperclip"></i> </button>\
+                        <button class="bg_none pull-right" ng-click="send_message('+chat_friend+',message)"><i class="glyphicon  glyphicon-thumbs-up"></i> </button>\
+                        </div>\
+                        </div>\
+                        </div>';
         $compile(div)($scope);
         if(popups.length>1){
             document.getElementById(chat_friend+"01").className=document.getElementById(popups[popups.length-2]+"01").className.replace(/(?:^|\s)popup-box-on(?!\S)/g , '');
@@ -232,14 +291,18 @@ app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',
     //this is used to close a popup
     $scope.close_chat= function(chat_friend)
     {
+        chat_box=null;
         console.log(chat_friend);
         console.log(popups);
+        
         for(var iii = 0; iii < popups.length; iii++)
         {
             if(chat_friend == popups[iii])
             {
                 console.log("sss");
-                document.getElementById(popups[popups.length-1]+"01").className=document.getElementById(popups[popups.length-1]+"01").className.replace(/(?:^|\s)popup-box-on(?!\S)/g , '');
+//                document.getElementById(popups[popups.length-1]+"01").className=document.getElementById(popups[popups.length-1]+"01").className.replace(/(?:^|\s)popup-box-on(?!\S)/g , '');
+                var chat_box=document.getElementById(popups[popups.length-1]+"01");
+                chat_box.parentElement.removeChild(chat_box);
                 popups.splice(iii,1);
             }
         }   

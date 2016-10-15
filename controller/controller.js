@@ -68,13 +68,18 @@ module.exports = function (app,io){
         console.log("User is connected  "+handle);
         console.log(socket.id);
         io.to(socket.id).emit('handle', handle);
+        users[handle]=socket.id;
+        keys[socket.id]=handle;
+        console.log(users);
         models.user.find({"handle" : handle},{friends:1,_id:0},function(err,doc){
             if(err){res.json(err);}
             else{
-                list=doc[0].friends.slice();
-                console.log(list);
                 friends=[];
                 pending=[];
+                all_friends=[];
+                list=doc[0].friends.slice();
+                console.log(list);
+                
                 for(var i in list){
                     if(list[i].status=="Friend"){
                         friends.push(list[i].name);
@@ -88,15 +93,19 @@ module.exports = function (app,io){
                 }
                 console.log(friends);
                 console.log(pending+"pending");
+//                io.to(socket.id).emit('all_friend_list', friends);
                 io.to(socket.id).emit('friend_list', friends);
                 io.to(socket.id).emit('pending_list', pending);
+                io.emit('users',users);
             }
         });
         
-        users[handle]=socket.id;
-        keys[socket.id]=handle;
-        console.log(users);
-        io.emit('users',users);
+        
+        socket.on('group message',function(msg){
+            console.log(msg);
+            io.emit('group',msg);
+        });
+        
         socket.on('private message',function(msg){
             console.log('message  :'+msg.split("#*@")[0]);
             io.to(users[msg.split("#*@")[0]]).emit('private message', msg);
@@ -113,6 +122,13 @@ module.exports = function (app,io){
     app.post('/friend_request',function(req,res){
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader("Access-Control-Allow-Method","'GET, POST, OPTIONS, PUT, PATCH, DELETE'");
+        friend=true;
+        models.user.find({"handle" : req.body.my_handle,"friends.name":req.body.friend_handle},function(err,doc){
+            if(err){res.json(err);}
+            else{
+                console.log(doc);
+            }
+        });
         models.user.update({
             handle:req.body.my_handle
         },{
