@@ -42,7 +42,6 @@ I had seen a lot of times during local camps that people find it difficult to in
 # Upcoming
 I have lot of things to do. 
 * Initially there are lot of bugs in the basic functionality. Will have to fix this.
-* Group chat is not yet implemented. Will be coming soon. Hoping so.
 * Improvement in register and login screen. This has to be fixed as soon as bug fixes are done.  
 
 # Suggestions
