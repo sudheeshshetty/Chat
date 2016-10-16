@@ -71,12 +71,14 @@ module.exports = function (app,io){
         users[handle]=socket.id;
         keys[socket.id]=handle;
         console.log(users);
+        console.log(keys);
         models.user.find({"handle" : handle},{friends:1,_id:0},function(err,doc){
             if(err){res.json(err);}
             else{
                 friends=[];
                 pending=[];
                 all_friends=[];
+                console.log(doc);
                 list=doc[0].friends.slice();
                 console.log(list);
                 

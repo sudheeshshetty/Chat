@@ -114,6 +114,7 @@ app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',
         console.log("Connection Established"+data);
         $scope.$apply(function () {
             if (!$scope.friends.includes(data)){
+                console.log(data);
                 $scope.friends.push(data);
                 $scope.users.splice($scope.users.indexOf(data));
             }
