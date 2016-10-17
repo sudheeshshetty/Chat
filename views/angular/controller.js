@@ -15,21 +15,23 @@ app.factory('socket', ['$rootScope', function($rootScope) {
 
 app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',function($scope,socket,$http,$mdDialog,$compile){
     $scope.users=[];
-    $scope.friends=[];
+    $scope.online_friends=[];
     $scope.allfriends=[];
+    var monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October","November", "December"];
 
     socket.on('handle', function(data) {
         $scope.user = data;
+        console.log("Get handle : "+$scope.user);
     });
 
-    var monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October","November", "December"];
+    
 
     socket.on('friend_list', function(data) {
-        console.log(data);
+        console.log("Friends list : "+data);
         $scope.$apply(function () {
             $scope.allfriends.push.apply($scope.allfriends,data);
         });
-        console.log($scope.allfriends);
+        console.log("Friends list : "+$scope.allfriends);
     });
 
     socket.on('pending_list', function(data) {
@@ -37,17 +39,17 @@ app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',
     });
 
     socket.on('users', function(data) {
-        console.log(data);
+        console.log("users list : "+data);
         $scope.$apply(function () {
             $scope.users=[];
-            $scope.friends=[];
+            $scope.online_friends=[];
             for(var i in data){
+                console.log("users list : "+i);
                 if (i!=$scope.user){
                     console.log(i);
-                    console.log($scope.allfriends);
+                    console.log("users list : "+$scope.allfriends);
                     if ( $scope.allfriends.includes(i) ){
-                        console.log("asasa");
-                        $scope.friends.push(i);
+                        $scope.online_friends.push(i);
                     }
                     else{
                         $scope.users.push(i);                        
@@ -55,9 +57,9 @@ app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',
                     
                 }
             }
-            console.log($scope.allfriends);
-            console.log($scope.users);
-            console.log($scope.friends);
+            console.log("users list : "+$scope.allfriends);
+            console.log("users list : "+$scope.users);
+            console.log("users list : "+$scope.online_friends);
         });
     });
     
@@ -67,13 +69,13 @@ app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',
             "my_handle":$scope.user
         };
 
-        var config = {
-            headers : {
-                'Content-Type': 'application/json'
-            }
-        };
+//        var config = {
+//            headers : {
+//                'Content-Type': 'application/json'
+//            }
+//        };
 
-        $http({method: 'POST',url:'http://localhost:8080/friend_request', data:data, headers:config})
+        $http({method: 'POST',url:'http://localhost:8080/friend_request',data})//, headers:config})
             .success(function (data) {
             console.log(data)
         })
@@ -94,15 +96,17 @@ app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',
 
         $mdDialog.show(confirm).then(function() {
             data['confirm']="Yes";
-            $http({method: 'POST',url:'http://localhost:8080/friend_request/confirmed', data:data, headers:{
-                'Content-Type': 'application/json'
-            }})
+            $http({method: 'POST',url:'http://localhost:8080/friend_request/confirmed', data//, headers:{
+                //'Content-Type': 'application/json'
+            //}
+            })
         }, function() {
             data['confirm']="No";
 
-            $http({method: 'POST',url:'http://localhost:8080/friend_request/confirmed', data:data, headers:{
-                'Content-Type': 'application/json'
-            }})
+            $http({method: 'POST',url:'http://localhost:8080/friend_request/confirmed', data//, headers:{
+            //    'Content-Type': 'application/json'
+            //}
+            })
         });
     };
 
@@ -113,10 +117,10 @@ app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',
     socket.on('friend', function(data) {
         console.log("Connection Established"+data);
         $scope.$apply(function () {
-            if (!$scope.friends.includes(data)){
+            if (!$scope.online_friends.includes(data)){
                 console.log(data);
-                $scope.friends.push(data);
-                $scope.users.splice($scope.users.indexOf(data));
+                $scope.online_friends.push(data);
+                $scope.users.splice($scope.users.indexOf(data),1);
             }
 
         });
@@ -283,12 +287,12 @@ app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',
         }
         var body=document.getElementsByTagName("body")[0];
         body.appendChild(div);
-        console.log($scope.friends);
+        console.log($scope.online_friends);
 //        $compile(body)($scope);
         popups.push(chat_friend);
         
     }
-    console.log($scope.friends);
+    console.log($scope.online_friends);
     //this is used to close a popup
     $scope.close_chat= function(chat_friend)
     {

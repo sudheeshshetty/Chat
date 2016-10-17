@@ -125,7 +125,7 @@
                           <h3 class="box-title">Friends</h3>
 
                           <div class="box-tools">
-                              <span class="label label-danger">{{friends.length}} Members</span>
+                              <span class="label label-danger">{{online_friends.length}} Members</span>
                               <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                               </button>
                               <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i>
@@ -135,7 +135,7 @@
                       <!-- /.box-header -->
                       <div class="box-body direct-chat-messages">
                           <ul class="users-list clearfix" >
-                              <li ng-repeat="friend in friends track by $index">
+                              <li ng-repeat="friend in online_friends track by $index">
                                   <button ng-click="chat_popup(friend)"> 
                                       <img src="/views/dist/img/user1-128x128.jpg" alt="User Image">
                                       <a class="users-list-name">{{friend}}</a></button>
