@@ -42,7 +42,8 @@ I had seen a lot of times during local camps that people find it difficult to in
 # Upcoming
 I have lot of things to do. 
 * Bug fixes.
-* More feauters to come, like blocking a user from chatting etc.
+* More feauters to come, like blocking a user from chatting etc.  
+* Option for saving chats in case you need it. For now it doesnot store the messages.
 
 # Suggestions
 If you have any suggestions please do mail me at `sudheeshshetty@gmail.com` with subject as `chat-suggestions`
