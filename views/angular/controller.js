@@ -1,4 +1,4 @@
-var app = angular.module('myapp',['ngMaterial']);
+var app = angular.module('myapp',['ngMaterial','ui.router']);
 
 app.factory('socket', ['$rootScope', function($rootScope) {
     var socket = io.connect();
@@ -13,7 +13,49 @@ app.factory('socket', ['$rootScope', function($rootScope) {
     };
 }]);
 
-app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',function($scope,socket,$http,$mdDialog,$compile){
+app.config(['$stateProvider','$urlRouterProvider',function($stateProvider,$urlRouterProvider){
+    $urlRouterProvider.otherwise('/');
+    $stateProvider
+    .state('login',{
+        url:'/',
+        views:{
+            'body':{
+                templateUrl:'/views/login.html',
+                controller:'registerController'
+            }
+        }
+    })
+    .state('loggedin',{
+        url:'/login',
+        views:{
+            'body':{
+                templateUrl:'/views/chat.html',
+                controller:'myController'
+            }
+        }
+    })
+}]);
+
+
+
+
+app.directive('myEnter', function () {
+    return function (scope, element, attrs) {
+        element.bind("keydown keypress", function (event) {
+            if(event.which === 13) {
+                scope.$apply(function (){
+                    scope.$eval(attrs.myEnter);
+                });
+
+                event.preventDefault();
+            }
+        });
+    };
+});
+
+
+app.controller('myController',['$scope','socket','$http','$mdDialog','$compile','$location','$state',function($scope,socket,$http,$mdDialog,$compile,$location,$state){
+    url= location.host;
     $scope.users=[];
     $scope.online_friends=[];
     $scope.allfriends=[];
@@ -75,7 +117,7 @@ app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',
 //            }
 //        };
 
-        $http({method: 'POST',url:'http://localhost:8080/friend_request',data})//, headers:config})
+        $http({method: 'POST',url:'http://'+url+'/friend_request',data})//, headers:config})
             .success(function (data) {
             console.log(data)
         })
@@ -96,14 +138,14 @@ app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',
 
         $mdDialog.show(confirm).then(function() {
             data['confirm']="Yes";
-            $http({method: 'POST',url:'http://localhost:8080/friend_request/confirmed', data//, headers:{
+            $http({method: 'POST',url:'http://'+url+'/friend_request/confirmed', data//, headers:{
                 //'Content-Type': 'application/json'
             //}
             })
         }, function() {
             data['confirm']="No";
 
-            $http({method: 'POST',url:'http://localhost:8080/friend_request/confirmed', data//, headers:{
+            $http({method: 'POST',url:'http://'+url+'/friend_request/confirmed', data//, headers:{
             //    'Content-Type': 'application/json'
             //}
             })
@@ -312,27 +354,69 @@ app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',
             }
         }   
     }
-    
-    //displays the popups. Displays based on the maximum number of popups that can be displayed on the current viewport width
-    function display_popups()
-    {
-        document.getElementById(popups[popups.length-2]+"01").className=document.getElementById(popups[popups.length-2]+"01").className.replace(/(?:^|\s)popup-box-on(?!\S)/g , '');
-        document.getElementById(popups[popups.length-1]+"01").className += "popup-box-on";
-    }
+//    
+//    //displays the popups. Displays based on the maximum number of popups that can be displayed on the current viewport width
+//    function display_popups()
+//    {
+//        document.getElementById(popups[popups.length-2]+"01").className=document.getElementById(popups[popups.length-2]+"01").className.replace(/(?:^|\s)popup-box-on(?!\S)/g , '');
+//        document.getElementById(popups[popups.length-1]+"01").className += "popup-box-on";
+//    }
     
 }]);
 
-
-app.directive('myEnter', function () {
-    return function (scope, element, attrs) {
-        element.bind("keydown keypress", function (event) {
-            if(event.which === 13) {
-                scope.$apply(function (){
-                    scope.$eval(attrs.myEnter);
-                });
-
-                event.preventDefault();
-            }
-        });
-    };
+app.service('encrypt', function() {
+    this.hash =function(str){
+        h = 7;
+        letters = "abcdefghijklmnopqrstuvwxyz-_1234567890@!#$%&*.,"
+        for (var i=0;i<str.length;i++){
+            h = (h * 37 + letters.indexOf(str[i]))
+        }
+        return h
+    }
 });
+
+app.controller('registerController',['$scope','encrypt','$http','$state',function($scope,encrypt,$http,$state){
+    url= location.host;
+
+    $scope.user={
+        'name':'',
+        'handle':'',
+        'password':'',
+        'email':'',
+        'phone':''
+    };
+
+    $scope.login_data={
+        'handle':'',
+        'password':''
+    };
+
+    $scope.Register = function(){
+        $scope.user.password=encrypt.hash($scope.user.password);
+
+        $http({method: 'POST',url:'http://'+url+'/register', data:$scope.user})//, headers:config})
+            .success(function (data) {
+            console.log(data)
+        })
+            .error(function (data) {
+            //add error handling
+            console.log(data)
+        });
+    }
+
+    $scope.login = function(){
+        console.log("login");
+        $scope.login_data.password=encrypt.hash($scope.login_data.password);
+        console.log($scope.login_data);
+        $http({ method: 'POST', url:'http://'+url+'/login', data:$scope.login_data })//, headers:config})
+            .success(function (data) {
+            if(data=="success"){
+                $state.go('loggedin');
+            }
+        })
+            .error(function (data) {
+            //add error handling
+            console.log(data)
+        });
+    }
+}]);

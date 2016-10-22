@@ -1,121 +1,129 @@
-<div class="col-md-6" >
-    <!-- DIRECT CHAT -->
-    <div class="box box-warning direct-chat direct-chat-warning" ng-repeat="friend in friends track by $index">
-        <div class="box-header with-border">
-            <h3 class="box-title" id="event_name">{{friend}}</h3>
+<nav class="navbar navbar-dark bg-primary">
+    <div class="container-fluid text-center">  
+        <a href="#" class="dropdown-toggle pull-right" data-toggle="dropdown">
+            <img src="dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
+            <span class="hidden-xs text">{{user | uppercase}}</span>
+        </a>
+    </div>
+</nav>
+<div class="hold-transition skin-blue sidebar-mini">
 
-            <div class="box-tools pull-right">
-                <!--                    <span data-toggle="tooltip" title="3 New Messages" class="badge bg-yellow">3</span>-->
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+    <!-- /.box -->
+    <div class="row">
+        <div class="col-md-6 pull-left">
+            <div class="box box-primary direct-chat direct-chat-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Group Chat</h3>
+                </div>
+                <div class="box-body">
+                    <!-- Conversations are loaded here -->
+                    <div class="direct-chat-messages" id="group">
 
-                </button>
-                <!--
-<button type="button" class="btn btn-box-tool" data-toggle="tooltip" title="Contacts" data-widget="chat-pane-toggle">
-<i class="fa fa-comments"></i></button>
--->
-
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i>
-                </button>
-            </div>
-        </div>
-        <!-- /.box-header -->
-        <div class="box-body">
-            <!-- Conversations are loaded here -->
-            <div class="direct-chat-messages" id="{{friend}}">
-
-            </div>
-            <!--/.direct-chat-messages-->
-
-            <!-- Contacts are loaded here -->
-            <div class="direct-chat-contacts">
-                <ul class="contacts-list">
-
-                    <!--
-<li>
-<a href="#">
-<img class="contacts-list-img" src="dist/img/user8-128x128.jpg" alt="User Image">
-
-<div class="contacts-list-info">
-<span class="contacts-list-name">
-Kenneth M.
-<small class="contacts-list-date pull-right">1/4/2015</small>
-</span>
-<span class="contacts-list-msg">Never mind I found...</span>
-</div>
-
-</a>
-</li>
--->
-                    <!-- End Contact Item -->
-                </ul>
-                <!-- /.contatcts-list -->
-            </div>
-            <!-- /.direct-chat-pane -->
-        </div>
-        <!-- /.box-body -->
-        <div class="box-footer">
-            <div>
-                <div class="input-group">
-                    <input type="text" name="message" placeholder="Type Message ..." class="form-control" ng-model="message" my-enter="send_message('{{friend}}','{{message}}')">
-                    <span class="input-group-btn">
-                        <button type="button" class="btn btn-warning btn-flat" ng-click="send_message(friend,message)">Send</button>
-                    </span>
+                    </div>
+                </div>
+                <div class="box-footer">
+                    <div>
+                        <div class="input-group">
+                            <input type="text" name="message" placeholder="Type Message ..." class="form-control" ng-model="groupMessage" my-enter="group_message('{{groupMessage}}')">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-primary btn-flat" ng-click="group_message(groupMessage)">Send</button>
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <!-- /.box-footer-->
+
+        <div class="col-md-3 pull-right">
+            <!-- USERS LIST -->
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Online Members</h3>
+
+                    <div class="box-tools pull-right">
+                        <span class="label label-danger">{{users.length}}</span>
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body direct-chat-messages">
+                    <ul class="users-list clearfix" >
+                        <li ng-repeat="user in users">
+                            <button  data-toggle="modal" data-target="#myModal" ng-click="friend_request(user)"> 
+                                <img src="/views/dist/img/user1-128x128.jpg" alt="User Image">
+                                <a class="users-list-name">{{user}}</a></button>
+                        </li>  
+                    </ul>
+                    <!-- /.users-list -->
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer text-center">
+                    <a href="javascript:void(0)" class="uppercase">Something</a>
+                </div>
+                <!-- /.box-footer -->
+            </div>
+            <!--/.box -->
+        </div>
+        <!-- /.col -->
+
+
+        <div class="col-md-3 pull-right">
+            <!-- USERS LIST -->
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Friends</h3>
+
+                    <div class="box-tools">
+                        <span class="label label-danger">{{online_friends.length}}</span>
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body direct-chat-messages">
+                    <ul class="users-list clearfix" >
+                        <li ng-repeat="friend in online_friends track by $index">
+                            <button ng-click="chat_popup(friend)"> 
+                                <img src="/views/dist/img/user1-128x128.jpg" alt="User Image">
+                                <a class="users-list-name">{{friend}}</a></button>
+                        </li>  
+                    </ul>
+                    <!-- /.users-list -->
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer text-center">
+                    <a href="javascript:void(0)" class="uppercase">Something</a>
+                </div>
+                <!-- /.box-footer -->
+            </div>
+            <!--/.box -->
+        </div>
+
     </div>
-    <!--/.direct-chat -->
+    <!-- /.row -->
+    <!-- Modal -->
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Are you sure you want to connect to {{friend}}?</h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="confirm()">ok</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">cancel</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
 </div>
-<!-- /.col -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var div='<div class="popup-box popup-box-on chat-popup" id="'+chat_friend+'">\
-    <div class="popup-head">\
-        <div class="popup-head-left pull-left"><img src="http://bootsnipp.com/img/avatars/bcf1c0d13e5500875fdd5a7e8ad9752ee16e7462.jpg" alt="iamgurdeeposahan">'+chat_friend+'</div>\
-        <div class="popup-head-right pull-right">\
-            <div class="btn-group">\
-                <button class="chat-header-button" data-toggle="dropdown" type="button" aria-expanded="false">\
-                    <i class="glyphicon glyphicon-cog"></i> </button>\
-                <ul role="menu" class="dropdown-menu pull-right">\
-                    <li><a href="#">Block</a></li>\
-                    <li><a href="#">Clear Chat</a></li>\
-                    <li><a href="#">Email Chat</a></li>\
-                </ul>\
-            </div>\
-            <button data-widget="remove" id="removeClass" ng-click="close_chat('+chat_friend+')" class="chat-header-button pull-right" type="button"><i class="glyphicon glyphicon-off"></i></button>\
-        </div>\
-    </div>\
-    <div class="popup-messages">\
-        <div class="direct-chat-messages" id="'+chat_friend+'">\
-        </div>\
-    </div>\
-    <div class="popup-messages-footer">\
-        <textarea id="status_message" placeholder="Type a message..." rows="10" cols="40" ng-model="message" my-enter="send_message(\'{{'+chat_friend+'}}\',\'{{message}}\')"></textarea>\
-        <div class="btn-footer">\
-            <button class="bg_none"><i class="glyphicon glyphicon-film"></i> </button>\
-            <button class="bg_none"><i class="glyphicon glyphicon-camera"></i> </button>\
-            <button class="bg_none"><i class="glyphicon glyphicon-paperclip"></i> </button>\
-            <button class="bg_none pull-right" ng-click="send_message('+chat_friend+',message)"><i class="glyphicon glyphicon-thumbs-up"></i> </button>\
-        </div>\
-    </div>\
-</div>\

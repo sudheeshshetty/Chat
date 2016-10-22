@@ -1,30 +1,60 @@
 <!doctype html>
-<html>
+<html ng-app="myapp">
     <head>
-        <title>Socket.IO chat</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Chat</title>
+        <!-- Tell the browser to be responsive to screen width -->
+        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+        <!---JS--->    
+        <!-- jQuery 2.2.3 -->
+        <script src="/views/plugins/jQuery/jquery-2.2.3.min.js"></script>
+
+        <!-- Bootstrap 3.3.6 -->
+        <script src="/views/bootstrap/js/bootstrap.min.js"></script>
+
+        <!-- FastClick -->
+        <script src="/views/plugins/fastclick/fastclick.js"></script>
+
+        <!-- AdminLTE App -->
+        <script src="/views/dist/js/app.min.js"></script>
+
+        <!---socket--->
+        <script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
+
+        <!---angular--->
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-messages.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.0.9/angular-material.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-aria.js"></script>
+        <script src="http://ngmaterial.assets.s3.amazonaws.com/svg-assets-cache.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.1/angular-ui-router.min.js"></script>
+
+        <!----CSS----->
+        <!---angular material-->
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+
+        <!--- Custom css--->
+        <link rel="stylesheet" href="/views/css/style.css">
+
+        <!-- Bootstrap 3.3.6 -->
+        <link rel="stylesheet" href="/views/bootstrap/css/bootstrap.min.css">
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+        <!-- Ionicons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+
+        <!-- Theme style -->
+        <link rel="stylesheet" href="/views/dist/css/AdminLTE.min.css">
+
+        <!---manual--->
+        <script src="/views/angular/controller.js"></script>
     </head>
     <body>
-        <form action="http://localhost:8080/register" method="post">
-            Name:<br>
-            <input id="name" type="text" name="name" placeholder="Enter your name">
-            <br>
-            Handle:<br>
-            <input id="handle" type="text" name="handle" placeholder="Enter the handle you want to use">
-            <br>
-            Phone:<br>
-            <input id="phone" type="text" name="phone" placeholder="Enter your phone number">
-            <br>
-            Email:<br>
-            <input id="email" type="email" name="email" placeholder="Enter your email">
-            <br><br>
-            <input type="submit" value="Submit">
-        </form>
         
-        <form action="http://localhost:8080/login">
-            Handle:<br>
-            <input id="handle" type="text" name="handle" placeholder="Enter the handle you want to use">
-            <br><br><br>
-            <input type="submit" value="login">
-        </form>
+        <div ui-view="body"></div>
+        
     </body>
 </html>

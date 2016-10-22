@@ -17,6 +17,7 @@ mongoose.connect('mongodb://localhost/mongodb');
 module.exports.user=mongoose.model('User',new Schema({
     name:String,
     handle: String,
+    password: String,
     phone:String,
     email:String,
     friends:[]

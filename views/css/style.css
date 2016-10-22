@@ -21,7 +21,7 @@ body
 .round.hollow a {
     border: 2px solid #ff6701;
     border-radius: 35px;
-    color: red;
+    color: dodgerblue;
     color: #ff6701;
     font-size: 23px;
     padding: 10px 21px;
@@ -31,7 +31,7 @@ body
 .round.hollow a:hover {
     border: 2px solid #000;
     border-radius: 35px;
-    color: red;
+    color: dodgerblue;
     color: #000;
     font-size: 23px;
     padding: 10px 21px;
@@ -53,7 +53,7 @@ body
 .bg_none i {
     border: 1px solid #ff6701;
     border-radius: 25px;
-    color: #ff6701;
+    color: dodgerblue;
     font-size: 17px;
     height: 33px;
     line-height: 30px;
@@ -115,7 +115,7 @@ body
 
 
 .popup-box .popup-messages {
-    background: #3f9684 none repeat scroll 0 0;
+    background: #337ab7 none repeat scroll 0 0;
     height: 275px;
     overflow: auto;
 }
@@ -133,7 +133,7 @@ body
     text-align: center;
 }
 .popup-messages abbr.timestamp {
-    background: #3f9684 none repeat scroll 0 0;
+    background: #337ab7 none repeat scroll 0 0;
     color: #fff;
     padding: 0 11px;
 }
@@ -163,7 +163,7 @@ body
 }
 
 .popup-messages abbr.timestamp {
-    background: #3f9684  none repeat scroll 0 0;
+    background: #337ab7 none repeat scroll 0 0;
     color: #fff;
     padding: 0 11px;
 }
@@ -236,6 +236,38 @@ body
     position: relative;
 }
 
+.Absolute-Center {
+    margin: auto;
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+}
+.Absolute-Center.is-Responsive {
+    width: 50%; 
+    height: 50%;
+    min-width: 200px;
+    max-width: 400px;
+    padding: 40px;
+}
+.center{
+    max-width: 35%;
+    max-height: 50%;
+    border: 1px solid ;
+    border-color: royalblue;
+    margin: auto;
+    margin-top: 10%;
+}
+
+.inner_container{
+    max-width: 100%;
+    max-height: 100%;
+    padding: 10px;
+}
+
+.text{
+    color: white;
+}
+
+/*
 .popup-messages .doted-border::after {
     background: transparent none repeat scroll 0 0 !important;
     border-right: 2px dotted #fff !important;
@@ -304,3 +336,4 @@ body
     padding: 5px 10px;
     position: relative;
 }
+*/
