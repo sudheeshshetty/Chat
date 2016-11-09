@@ -41,11 +41,13 @@ I had seen a lot of times during local camps that people find it difficult to in
 
 # Upcoming
 I have lot of things to do. 
-* Initially there are lot of bugs in the basic functionality. Will have to fix this.
-* Improvement in register and login screen. This has to be fixed as soon as bug fixes are done.  
+* Bug fixes.
+* More feauters to come, like blocking a user from chatting etc.  
+* Option for saving chats in case you need it. For now it doesnot store the messages.
 
 # Suggestions
 If you have any suggestions please do mail me at `sudheeshshetty@gmail.com` with subject as `chat-suggestions`
 
 # Credits
-I have used some code from AdminLTE for the chat UI. The HTML and dependent CSS.
+I have used some code from AdminLTE for the chat UI. The HTML and dependent CSS.  
+The private chat box has been taken from [Gurdeep Osahan](http://bootsnipp.com/Gurdeep%20Osahan).
