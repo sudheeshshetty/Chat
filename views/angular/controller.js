@@ -1,4 +1,4 @@
-var app = angular.module('myapp',['ngMaterial','ui.router']);
+var app = angular.module('myapp',['ngMaterial','ui.router','ngStorage']);
 
 app.factory('socket', ['$rootScope', function($rootScope) {
     var socket = io.connect();
@@ -54,7 +54,7 @@ app.directive('myEnter', function () {
 });
 
 
-app.controller('myController',['$scope','socket','$http','$mdDialog','$compile','$location','$state',function($scope,socket,$http,$mdDialog,$compile,$location,$state){
+app.controller('myController',['$scope','socket','$http','$mdDialog','$compile','$location','$state','$localStorage', '$sessionStorage',function($scope,socket,$http,$mdDialog,$compile,$location,$state,$localStorage, $sessionStorage){
     url= location.host;
     $scope.users=[];
     $scope.online_friends=[];
@@ -243,7 +243,10 @@ app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',
             "sender":from,
             "msg" : msg,
             "date" : getDate()  
-        })
+        });
+        localStorage.setItem(to,JSON.stringify($scope.messages[to]));
+        localStorage.setItem(from,JSON.stringify($scope.messages[from]));
+        console.log(localStorage.getItem(to));
     }
 
     socket.on('private message', function(data) {        
@@ -286,7 +289,7 @@ app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',
                         </div>';
         document.getElementById(chat).appendChild(div);
         document.getElementById(chat).scrollTop=document.getElementById(chat).scrollHeight;
-        socket.emit('private message',chat+"#*@"+message+"#*@"+$scope.user);
+        socket.emit('private message',chat+"#*@"+message+"#*@"+$scope.user+"#*@"+getDate());
         insertMessage($scope.user,chat,message);
         $scope.message=null;
     }
@@ -354,6 +357,9 @@ app.controller('myController',['$scope','socket','$http','$mdDialog','$compile',
         }
         var body=document.getElementsByTagName("body")[0];
         body.appendChild(div);
+        if(localStorage.getItem(chat_friend)!==null){
+            $scope.messages[chat_friend] = JSON.parse(localStorage.getItem(chat_friend));
+        }
         if($scope.messages[chat_friend] != undefined){
             for(var i=0; i<$scope.messages[chat_friend].length; i++){
                 console.log($scope.messages[chat_friend][i].sender);
@@ -472,6 +478,7 @@ app.controller('registerController',['$scope','encrypt','$http','$state',functio
         $http({ method: 'POST', url:'http://'+url+'/login', data:$scope.login_data })//, headers:config})
             .success(function (data) {
             if(data=="success"){
+                console.log("Inside success login");
                 $state.go('loggedin');
             }
         })

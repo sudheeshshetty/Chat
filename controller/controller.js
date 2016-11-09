@@ -2,17 +2,7 @@ var models = require('../model/model.js');
 var path = require('path');
 var bodyParser = require('body-parser');
 
-var getDate=function(){
-    date = new Date();
-    hour=date.getHours();
-    period="AM";
-    if (hour>12){
-        hour=hour%12;
-        period="PM";
-    }
-    form_date=monthNames[date.getMonth()]+" "+date.getDate()+", "+hour+":"+date.getMinutes()+" "+period;
-    return form_date;        
-}
+
 
 module.exports = function (app,io){
     app.use( bodyParser.json() );
@@ -126,46 +116,11 @@ module.exports = function (app,io){
         
         socket.on('private message',function(msg){
             console.log('message  :'+msg.split("#*@")[0]);
-            models.user.find({
-                "handle" : msg.split("#*@")[2],
-                "chat.name" : msg.split("#*@")[0]
-            },function(err,doc){
-                if(err){res.json(err);}
-                else if(doc.length!=0){
-                    models.user.update({
-                        handle:msg.split("#*@")[2]
-                    },{
-                        $push:{
-                            chat:{
-                                sender : msg.split("#*@")[2],
-                                reciever : msg.split("#*@")[0],
-                                message : msg.split("#*@")[1],
-                                date : getDate()
-                            }
-                        }
-                    },{
-                        upsert : true
-                    },function(err,docs){
-                        if(err){res.json(err);}
-                    });
-                    models.user.update({
-                        handle:msg.split("#*@")[0]
-                    },{
-                        $push:{
-                            chat:{
-                                sender : msg.split("#*@")[2],
-                                reciever : msg.split("#*@")[0],
-                                message : msg.split("#*@")[1],
-                                date : getDate()
-                            }
-                        }
-                    },{
-                        upsert : true
-                    },function(err,docs){
-                        if(err){res.json(err);}
-                    });
-                }
-            });
+            models.messages.create({
+                "message":msg.split("#*@")[1],
+                "sender" :msg.split("#*@")[2],
+                "reciever":msg.split("#*@")[0],
+                "date" : new Date()});
             io.to(users[msg.split("#*@")[0]]).emit('private message', msg);
         });
         
