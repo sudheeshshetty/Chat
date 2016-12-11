@@ -70,32 +70,76 @@ Handle:<br>
         <div class="modal-content" >
             <div class="modal-header" style="padding:15px 50px;">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="text-center"><span class="glyphicon glyphicon-lock"></span> Register</h4>
+                <h4 class="text-center"><span class="glyphicon glyphicon-registration-mark"></span> Register</h4>
             </div>
             <div class="modal-body" style="padding:20px 50px;">
-                <form role="form" action="http://localhost:8080/register" method="post">
-                    <div class="form-group">
+                <form role="form" name="userForm" novalidate>
+                    <div class="form-group" ng-class="{ 'has-error' : userForm.name.$invalid && userForm.name.$touched }">
                         <label for="name"><span class="glyphicon glyphicon-user"></span> Name</label>
-                        <input type="text" class="form-control" id="name" placeholder="Full Name" ng-model="user.name">
+                        <input type="text" class="form-control" name="name" id="name" placeholder="Full Name" ng-model="user.name" required>
+                        <p ng-show="userForm.name.$invalid && userForm.name.$touched" class="help-block">You name is required.</p>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" ng-class="{ 'has-error' : userForm.handle.$invalid && userForm.handle.$touched }">
                         <label for="handle"><span class="glyphicon glyphicon-user"></span> Handle</label>
-                        <input type="text" class="form-control" id="handle" placeholder="Enter Handle" ng-model="user.handle">
+                        <input type="text" class="form-control" name="handle" id="handle" placeholder="Enter Handle" ng-model="user.handle" required>
+                        <p ng-show="userForm.name.$invalid && userForm.name.$touched" class="help-block">Handle is required.</p>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" ng-class="{ 'has-error' : userForm.password.$invalid && userForm.password.$touched }">
                         <label for="psw"><span class="glyphicon glyphicon-eye-open"></span> Password</label>
-                        <input type="password" class="form-control" id="psw" placeholder="Enter password" ng-model="user.password">
+                        <input type="password" class="form-control" name="password" id="psw" placeholder="Enter password" ng-model="user.password" required>
+                        <p ng-show="userForm.name.$invalid && userForm.name.$touched" class="help-block">Password is required.</p>
+                    </div>
+                    <div class="form-group" ng-class="{ 'has-error' : userForm.confirmpassword.$invalid && userForm.confirmpassword.$touched && user.password!=user.confirmpassword}">
+                        <label for="copsw"><span class="glyphicon glyphicon-eye-open"></span> Confirm Password</label>
+                        <input type="password" class="form-control" name="confirmpassword" id="copsw" placeholder="Confirm password" ng-model="user.confirmpassword" required>
+<!--                        <p ng-show="userForm.confirmpassword.$invalid && userForm.confirmpassword.$touched" class="help-block">Confirm your Password</p>-->
+                        <p ng-show="userForm.confirmpassword.$touched && user.password!=user.confirmpassword" class="help-block">Passwords do not match</p>
                     </div>
                     <div class="form-group">
+                        <label for="gender"><span class="glyphicon glyphicon-globe"></span> Gender</label>
+                        <div class="form-control">
+                            <label class="col-md-4"><input type="radio" name="gender" id="male" value="male" ng-model="user.gender" required>Male</label>
+                            <label class="col-md-4"><input type="radio" name="gender"  id="female" value="female" ng-model="user.gender" required>Female</label>
+                            <label class="col-md-4"><input type="radio" name="gender" id="others" value="others" ng-model="user.gender" required>Others</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="image"><span class="glyphicon glyphicon-camera"></span> Select Image</label>
+                        <div class="image-upload">
+                            <!--                            <div class="container preview col-lg-4 pull-left" ng-model="user.image"></div>-->
+                            <!--
+<div class="images">
+<div class="images-inner">
+<a href="#"><div class="select-image female1"></div></a>
+<a href="#"><div class="select-image female2"></div></a>
+<a href="#"><div class="select-image female3"></div></a>
+<a href="#"><div class="select-image female4"></div></a>
+<a href="#"><div class="select-image female5"></div></a>
+</div>
+<div class="images-inner">
+<a href="#"><div class="select-image male1"></div></a>
+<a href="#"><div class="select-image male2"></div></a>
+<a href="#"><div class="select-image male3"></div></a>
+<a href="#"><div class="select-image male4"></div></a>
+<a href="#"><div class="select-image male5"></div></a>
+</div>
+</div>
+-->
+                            <input type="file" name="image" accept="image/*" class="form-control" id="image" placeholder="Full Name" onchange="angular.element(this).scope().fileNameChanged(this)">
+                        </div>
+                    </div>
+                    <div class="form-group" ng-class="{ 'has-error' : userForm.email.$invalid && userForm.email.$touched }">
                         <label for="email"><span class="glyphicon glyphicon-envelope"></span> Email</label>
-                        <input type="text" class="form-control" id="email" placeholder="Enter Email" ng-model="user.email">
+                        <input type="text" class="form-control" name="email" id="email" placeholder="Enter Email" ng-model="user.email" required>
+                        <p ng-show="userForm.email.$invalid && userForm.email.$touched" class="help-block">Email Required</p>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" ng-class="{ 'has-error' : userForm.phone.$invalid && userForm.phone.$touched }">
                         <label for="phone"><span class="glyphicon glyphicon-phone"></span> Phone</label>
-                        <input type="text" class="form-control" id="phone" placeholder="Enter Phone number" ng-model="user.phone">
+                        <input type="text" class="form-control" name="phone" id="phone" placeholder="Enter Phone number" ng-model="user.phone" required>
+                        <p ng-show="userForm.phone.$invalid && userForm.phone.$touched" class="help-block">Phone number Required</p>
                     </div>
 
-                    <button type="button" class="btn btn-primary btn-block" data-dismiss="modal" ng-click="Register()"><span class="glyphicon glyphicon-off"></span>
+                    <button type="button" class="btn btn-primary btn-block" data-dismiss="modal" ng-click="Register()" ng-disabled="userForm.$invalid"><span class="glyphicon glyphicon-off"></span>
                         Register</button>
                 </form>
             </div>

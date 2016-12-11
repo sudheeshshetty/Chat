@@ -266,6 +266,85 @@ body
 .text{
     color: white;
 }
+.image-upload{
+    background-color: azure;
+    text-align: center;
+    margin:auto;
+}
+/*
+.images{
+    height:160px;    
+}
+.images-inner{
+    display: inline-block;
+}
+.select-image{
+    margin: 5px;
+    padding: 2px;
+    border:solid 2px black;
+    height: 65px;
+    width:65px;
+    background: no-repeat;
+    background-position: center;
+    background-size: 100%;
+    display: inline-block;
+}
+.female1{
+    background-image: url("/views/images/sample/female1.jpg");
+}
+.female2{
+    background-image: url("/views/images/sample/female2.jpg");
+}
+.female3{
+    background-image: url("/views/images/sample/female3.jpg");
+}
+.female4{
+    background-image: url("/views/images/sample/female4.png");
+}
+.female5{
+    background-image: url("/views/images/sample/female5.jpg");
+}
+.male1{
+    background-image: url("/views/images/sample/male1.jpg")
+}
+.male2{
+    background-image: url("/views/images/sample/male2.jpg");
+}
+.male3{
+    background-image: url("/views/images/sample/male3.jpg");
+}
+.male4{
+    background-image: url("/views/images/sample/male4.jpg");
+}
+.male5{
+    background-image: url("/views/images/sample/male5.jpg");
+}
+*/
+
+/*
+.image-preview-input {
+    position: relative;
+    overflow: hidden;
+    margin: 0px;    
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;    
+}
+.image-preview-input input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+.image-preview-input-title {
+    margin-left:2px;
+}
+*/
 
 /*
 .popup-messages .doted-border::after {

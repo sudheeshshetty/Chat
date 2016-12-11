@@ -442,13 +442,16 @@ app.service('encrypt', function() {
     }
 });
 
-app.controller('registerController',['$scope','encrypt','$http','$state',function($scope,encrypt,$http,$state){
+app.controller('registerController',['$scope','encrypt','$http','$state','$mdDialog','$http',function($scope,encrypt,$http,$state,$mdDialog,$http){
     url= location.host;
 
     $scope.user={
         'name':'',
         'handle':'',
         'password':'',
+        'confirmpassword':'',
+        'gender':'',
+        'image':'',
         'email':'',
         'phone':''
     };
@@ -459,16 +462,23 @@ app.controller('registerController',['$scope','encrypt','$http','$state',functio
     };
 
     $scope.Register = function(){
-        $scope.user.password=encrypt.hash($scope.user.password);
+        
+        if($scope.user.password==$scope.user.confirmpassword){
+            $scope.user.password=encrypt.hash($scope.user.password);
+            $http({method: 'POST',url:'http://'+url+'/register', data:$scope.user})//, headers:config})
+                .success(function (data) {
+                console.log(data)
+            })
+                .error(function (data) {
+                //add error handling
+                console.log(data)
+            });
+        }
+        else{
+            
+        }
 
-        $http({method: 'POST',url:'http://'+url+'/register', data:$scope.user})//, headers:config})
-            .success(function (data) {
-            console.log(data)
-        })
-            .error(function (data) {
-            //add error handling
-            console.log(data)
-        });
+        
     }
 
     $scope.login = function(){
@@ -481,10 +491,47 @@ app.controller('registerController',['$scope','encrypt','$http','$state',functio
                 console.log("Inside success login");
                 $state.go('loggedin');
             }
+            else if(data=="User has not registered"){
+                
+                var alert = $mdDialog.alert()
+                .title(" Not Registered ")
+                .textContent('You need to register to use this service')
+                .ok('Close');
+                
+                $mdDialog.show(alert).finally(function() {
+                    $state.reload();
+                });
+            }
         })
             .error(function (data) {
             //add error handling
             console.log(data)
         });
+    }
+    
+    $scope.fileNameChanged = function(element){
+        console.log("sss");
+        console.log(element);
+        console.log(element.files[0]);
+        var formdata = new FormData();
+        formdata.append('userpic',element.files[0],element.files[0]);
+        
+        var request = {
+            method: 'POST',
+            url: 'http://'+url+'/file-upload',
+            data: formdata,
+            headers: {
+                'Content-Type': undefined
+            },
+            transformRequest: angular.identity
+        };
+        
+        $http(request)
+            .success(function (d) {
+            $scope.user.image=d
+        })
+            .error(function () {
+        });
+//        $http({ method: 'POST', url:'http://'+url+'/file-upload', data:element.files[0], headers: {'Content-Type': undefined },transformRequest: angular.identity });
     }
 }]);

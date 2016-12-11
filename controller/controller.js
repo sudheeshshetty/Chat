@@ -1,11 +1,13 @@
 var models = require('../model/model.js');
 var path = require('path');
 var bodyParser = require('body-parser');
-
+var fs = require('fs');
+var multer  = require('multer');
 
 
 module.exports = function (app,io){
     app.use( bodyParser.json() );
+    app.use(multer({ dest: path.resolve(__dirname+'/../model/images/users/'),inMemory: true, includeEmptyFields: true}).any());
     app.use(bodyParser.urlencoded({     
         extended: true
     }));
@@ -17,12 +19,28 @@ module.exports = function (app,io){
     app.post('/register',function(req,res){
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader("Access-Control-Allow-Method","'GET, POST, OPTIONS, PUT, PATCH, DELETE'");
+        var tmp_path=String(req.body.image);
+        var target_path=path.resolve(__dirname+'/../model/images/users/'+req.body.handle);
+        source=fs.createReadStream(tmp_path);
+        dest=fs.createWriteStream(target_path);
+        source.pipe(dest);
+        source.on('end',function(){
+            fs.unlink(tmp_path, function(err){
+                if(err) throw err;
+            });
+            res.send(target_path);
+        });
+        source.on('error',function(){
+            console.log("Error");
+        });
         var user={
             "name":req.body.name,
             "handle":req.body.handle,
             "password":req.body.password,
+            "gender":req.body.gender,
+            "image":target_path,
             "phone":req.body.phone,
-            "email":req.body.email,
+            "email":req.body.email
         };
         console.log(user);
         
@@ -44,6 +62,32 @@ module.exports = function (app,io){
         
     });
     
+    app.post('/file-upload', function(req, res) {
+        // get the temporary location of the file
+        console.log("Inside file-upload");
+        console.log(String(req.files[0].filename));
+        console.log(req.files);
+        res.send(String(req.files[0].path));
+//        var tmp_path = String(req.files[0].path);
+//        console.log(tmp_path);
+//        var target_path = path.resolve(__dirname+'/../model/images/users/'+ String(req.files[0].filename));
+        // move the file from the temporary location to the intended location
+//        source=fs.createReadStream(tmp_path);
+//        dest=fs.createWriteStream(target_path);
+//        source.pipe(dest);
+//        source.on('end',function(){
+//            fs.unlink(tmp_path, function(err){
+//                if(err) throw err;
+//            });
+//            res.send(target_path);
+//        });
+//        source.on('error',function(){
+//            console.log("Error");
+//        });
+        
+        
+    });
+    
     
     var handle=null;
     var private=null;
@@ -60,6 +104,7 @@ module.exports = function (app,io){
                 res.send(err); 
             }
             if(doc==null){
+                console.log("USer not registered");
                 res.send("User has not registered");
             }
             else{
