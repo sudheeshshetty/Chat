@@ -1,7 +1,3 @@
-Copyright for portions of project ReactJS-AdminLTE are held by almasaeed2010, 2014-2016
-as part of project AdminLTE. All other copyright for project Chat 
-is held by Sudheeshshetty, 2016.
-
 MIT License
 
 Copyright (c) 2016 Sudheeshshetty
